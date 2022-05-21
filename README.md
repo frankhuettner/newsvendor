@@ -1,0 +1,1 @@
+This repo contains the [Newsvendor Games](https://newsvendor.games).

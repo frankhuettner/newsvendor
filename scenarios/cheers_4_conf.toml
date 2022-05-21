@@ -1,0 +1,23 @@
+name = "cheers_4"
+
+[unit_value]
+c = 10
+p = 42
+s = 0
+
+[distribution]
+typus = "Truncated Normal"
+l = 0
+u = 2
+"μ" = 0.9
+"σ" = 0.7000000000000001
+discrete_probs = [0.5, 0.2, 0.0]
+
+[story]
+title = "Patisserie Cheers! (IV)"
+url = "https://git.io/JK8J7"
+
+[sim_conf]
+max_num_days = 30
+delay = 50
+allow_reset = true
