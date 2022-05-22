@@ -319,12 +319,6 @@ Decision biases
 # ╔═╡ a6bf2500-0418-488c-a5ff-69cba2e9d1f7
 
 
-# ╔═╡ 47bad2aa-051e-4ef0-97b6-2d94641b1a5d
-
-
-# ╔═╡ c580aaae-7e6b-4a74-b360-d0e99322b82c
-
-
 # ╔═╡ c8618313-9982-44e0-a110-2d75c69c75e8
 begin
 	# Foldable
@@ -2903,8 +2897,6 @@ version = "0.9.1+5"
 # ╟─19975a48-0f5f-4f8b-903c-3d93181d81a1
 # ╟─5f7cf638-cbf8-48f8-a8bb-b1ebf5ba88ab
 # ╟─a6bf2500-0418-488c-a5ff-69cba2e9d1f7
-# ╟─47bad2aa-051e-4ef0-97b6-2d94641b1a5d
-# ╟─c580aaae-7e6b-4a74-b360-d0e99322b82c
 # ╟─e0d09197-fc18-46e9-b0f9-b513ea32596a
 # ╟─b2c19571-95b1-4b7f-9ec1-ed83ba7b8aef
 # ╟─375b5f20-ff08-4d9a-8d41-38214db962de

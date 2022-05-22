@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.2
+# v0.19.4
 
 using Markdown
 using InteractiveUtils
@@ -21,14 +21,14 @@ using PlutoUI, NewsvendorModel, Distributions, StatsPlots, StatsBase
 # ╔═╡ 9fe9d52f-7cb0-4433-8566-0ad1ca30064a
 md"""
 ### Demand
-* Expected demand `μ`= $(@bind mu NumberField(0:10_000, default=150))
-* Standard deviation `σ` = $(@bind sigma NumberField(0:10_000, default=50))
+* Expected demand `μ`= $(@bind mu NumberField(0:10_000, default=50))
+* Standard deviation `σ` = $(@bind sigma NumberField(0:10_000, default=20))
 * Lower bound = $(@bind l NumberField(0:10_000, default=0)) Upper bound = $(@bind u NumberField(0:1_000_000, default=300))
 
 ### Unit values
 
-* Unit cost = $(@bind c NumberField(0:10_000, default=1))
-* Unit price = $(@bind p NumberField(0:10_000, default=4))
+* Unit cost = $(@bind c NumberField(0:10_000, default=5))
+* Unit price = $(@bind p NumberField(0:10_000, default=7))
 * Salvage value = $(@bind s NumberField(0:10_000, default=0)) ``~~~~~~``Back-order unit penalty = $(@bind b NumberField(0:10_000, default=0))
 
 ### Bounds on resulting quantity 
@@ -42,13 +42,58 @@ begin
 	solve(nvm)
 end
 
+# ╔═╡ 6cbadbf3-b212-4c87-a2fb-7885f8b114e3
+	function my_round(x::Real; sigdigits::Int=3)
+		x = round(x, sigdigits=sigdigits)
+		if x >= 10^(sigdigits-1)
+			Int(x)
+		else
+			x
+		end
+	end;
+
 # ╔═╡ 0cdac2a0-96c8-4e69-a18c-ec111edfd18d
 begin
-	p1 = plot(distr(nvm), ylabel = "\n Probability", yaxis = nothing, title = "Demand distribution", legend=nothing, xaxis = "Number of units", lw = 4)
-	cu, co, cf = underage_cost(nvm),overage_cost(nvm), critical_fractile(nvm)
-	p2 = pie(["Cost of underage = $(cu)", "Cost of overage = $(co)"], [cu,co], title = "Cricitcal fractile = $(cf)")
-	plot(p1, p2)
+	μ = distr(nvm) |> mean
+	σ = distr(nvm) |> std
+	my_SL= critical_fractile(nvm)
+	d = distr(nvm) 
 	
+	xs = μ-3*σ:1:μ+3*σ
+	p3 = plot(xlim=(μ-3*σ,μ+3*σ), ylabel=" \n How likely", yaxis=nothing)
+	
+	my_SL_percent = my_round(my_SL * 100)
+	x_lower = μ-3*σ
+	x_upper = quantile(d, my_SL)
+	interval = x_lower:x_upper
+
+	res = round(Int,x_upper)
+	
+	plot!(p3, xs, pdf.(d,xs), lw=5)
+	plot!(p3, interval, x->0, fillrange = pdf.(d,interval),
+		size = (700,300),
+		fillalpha = 0.35, 
+		 c = :purple,
+		legend=:false )
+	
+	annotate!(p3, 0.99*x_upper, 0.001, text("Opt. Quantity\n= $(res)",15, :green, rotation = 90 , :navy, :left))
+	vline!(p3, [x_upper], lc=:navy, lw=3)
+	
+
+	annotate!(p3, (res+μ+3*σ)/2, 0.1*pdf.(d,μ), 
+		text("$(my_round((100-my_SL_percent)))% ",14, :grey))
+	
+	annotate!(p3, (res+μ-3*σ)/2, 0.1*pdf.(d,μ), 
+		text("$(my_SL_percent)% ",14, :purple))
+
+	
+	p1 = plot(distr(nvm), ylabel = "\n Probability", yaxis = nothing, title = "Demand distribution", legend=nothing, xaxis = "Number of units", lw = 4)
+
+	
+	cu, co, cf = underage_cost(nvm),overage_cost(nvm), critical_fractile(nvm)
+	p2 = pie(["Cost of underage = $(cu)", "Cost of overage = $(co)"], [cu,co], title = "Cricitcal fractile = $(my_round(cf))")
+	
+	plot(p2, p3)
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1190,9 +1235,10 @@ version = "0.9.1+5"
 """
 
 # ╔═╡ Cell order:
-# ╠═66f1021a-d13f-4e5f-b253-2da5dde24911
+# ╟─66f1021a-d13f-4e5f-b253-2da5dde24911
 # ╟─9fe9d52f-7cb0-4433-8566-0ad1ca30064a
-# ╠═61cb8315-7a59-4d7a-bd96-bc05ff172929
-# ╠═0cdac2a0-96c8-4e69-a18c-ec111edfd18d
+# ╟─61cb8315-7a59-4d7a-bd96-bc05ff172929
+# ╟─0cdac2a0-96c8-4e69-a18c-ec111edfd18d
+# ╟─6cbadbf3-b212-4c87-a2fb-7885f8b114e3
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002

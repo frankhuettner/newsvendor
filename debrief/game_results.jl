@@ -90,6 +90,12 @@ md"""
 ## What Went Wrong?
 """
 
+# ╔═╡ 9f16663d-0fac-47eb-9706-be738fa5d5f5
+md"""
+👉 $(@bind no_variation html"<input type=checkbox>")
+
+"""
+
 # ╔═╡ a31d8f99-7487-4935-988b-9717c1ab9289
 
 
@@ -859,18 +865,6 @@ if @isdefined df_res
 end
 end
 
-# ╔═╡ cea3f4ee-5ba2-4317-ab62-8a949abf7a33
-TwoColumn(md"""
-Show expected result had you always ordered $(round(Int,mean(df_res[:,:AvgStock])))
-
-"""
-	,
-md"""
-👉 $(@bind no_variation html"<input type=checkbox>")
-
-"""
-)
-
 # ╔═╡ bbaff929-0f20-4e58-8930-430be3f03d71
 begin
 	no_variation
@@ -892,6 +886,13 @@ begin
 	annotate!(200, 100, text("Status Quo",14, :white, :left))
 	annotate!(200, 90, text("Ignorant of Uncertainty",14, :white, :left))
 end
+
+# ╔═╡ cea3f4ee-5ba2-4317-ab62-8a949abf7a33
+md"""
+Want to see the expected result had you always ordered $(round(Int,mean(df_res[:,:AvgStock])))?
+
+"""
+
 
 # ╔═╡ 53b86fb2-3fe6-4670-b56e-a67dade1d0a4
 describe(df_res)
@@ -2664,6 +2665,7 @@ version = "0.9.1+5"
 # ╟─66025ac7-47d6-4c11-83fa-befff248e2ea
 # ╟─bbaff929-0f20-4e58-8930-430be3f03d71
 # ╟─cea3f4ee-5ba2-4317-ab62-8a949abf7a33
+# ╟─9f16663d-0fac-47eb-9706-be738fa5d5f5
 # ╟─a31d8f99-7487-4935-988b-9717c1ab9289
 # ╟─5f7cf638-cbf8-48f8-a8bb-b1ebf5ba88ab
 # ╟─fe94c8b9-02ea-4613-b7ba-030b4587ac40
