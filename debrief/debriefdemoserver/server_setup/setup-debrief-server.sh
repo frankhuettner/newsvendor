@@ -5,7 +5,7 @@
 # git clone https://github.com/frankhuettner/newsvendor
 
 # Give permission to this script
-# chmod +x debrief/debriefdemoserver_setup/setup-debrief-server.sh
+# chmod +x debrief/debriefdemoserver/setup-debrief-server.sh
 ######################################################################
 
 
@@ -30,7 +30,7 @@ julia -e "import Pkg; Pkg.add(\"PlutoSliderServer\")"
 TEMPFILE=$(mktemp)
 cat > $TEMPFILE << __EOF__
 #!/bin/bash
-cd /root/newsvendor/debrief
+cd /root/newsvendor/debrief/debriefdemoserver/watchdir
 julia --project="pluto-slider-server-environment" -e "import Pkg; Pkg.instantiate(); import PlutoSliderServer; PlutoSliderServer.run_git_directory(\".\", Export_offer_binder=false)"
 __EOF__
 
@@ -86,7 +86,7 @@ sudo systemctl enable pluto-server
 sudo apt-get update
 sudo apt install nginx
 # sudo systemctl status nginx
-sudo cp debrief/debriefdemoserver_setup/server_setup/nginx-default /etc/nginx/sites-enabled/default
+sudo cp debrief/debriefdemoserver/server_setup/nginx-default /etc/nginx/sites-enabled/default
 sudo systemctl restart nginx
 
 # Start firewall

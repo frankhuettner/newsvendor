@@ -5,7 +5,7 @@
 # git clone https://github.com/frankhuettner/newsvendor
 
 # Give permission to this script
-# chmod +x game/gamedemoserver_setup/server_setup/setup-demo-server.sh
+# chmod +x game/gamedemoserver/server_setup/setup-demo-server.sh
 ######################################################################
 ######################################################################
 
@@ -17,7 +17,7 @@
 sudo apt-get update
 sudo apt install nginx
 # sudo systemctl status nginx
-sudo cp game/gamedemoserver_setup/server_setup/nginx-default /etc/nginx/sites-enabled/default
+sudo cp game/gamedemoserver/server_setup/nginx-default /etc/nginx/sites-enabled/default
 sudo systemctl restart nginx
 
 # Start firewall
@@ -61,9 +61,9 @@ julia -e "import Pkg; Pkg.add(\"PlutoSliderServer\")"
 TEMPFILE=$(mktemp)
 cat > $TEMPFILE << __EOF__
 #!/bin/bash
-find /root/newsvendor/game/gamedemoserver_setup/watchdir -maxdepth 1 -type f -exec rm -f {} \;
+find /root/newsvendor/game/gamedemoserver/watchdir -maxdepth 1 -type f -exec rm -f {} \;
 sleep 2
-cp -R -f /root/newsvendor/game/gamedemoserver_setup/source/* /root/newsvendor/demo/watchdir
+cp -R -f /root/newsvendor/game/gamedemoserver/source/* /root/newsvendor/demo/watchdir
 __EOF__
 sudo mv $TEMPFILE /usr/local/bin/reload-demo-notebooks.sh
 
@@ -105,7 +105,7 @@ sudo systemctl enable reload-demo-notebooks
 TEMPFILE=$(mktemp)
 cat > $TEMPFILE << __EOF__
 #!/bin/bash
-cd /root/newsvendor/game/gamedemoserver_setup/watchdir
+cd /root/newsvendor/game/gamedemoserver/watchdir
 julia --project="pluto-slider-server-environment" -e "import Pkg; Pkg.instantiate(); import PlutoSliderServer; PlutoSliderServer.run_git_directory(\".\", Export_offer_binder=false)"
 __EOF__
 
@@ -157,7 +157,7 @@ sudo systemctl enable pluto-server
 
 
 # Start manually
-# cd /root/newsvendor/game/gamedemoserver_setup
+# cd /root/newsvendor/game/gamedemoserver
 # tmux
 # julia --project="pluto-slider-server-environment" -e "import Pkg; Pkg.instantiate(); import PlutoSliderServer; PlutoSliderServer.run_git_directory(\".\", Export_offer_binder=false)"
 # ctrl b   and d
