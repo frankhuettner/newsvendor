@@ -21,6 +21,12 @@ begin
 	md""
 end
 
+# ╔═╡ 84017a5c-bb38-417b-96b3-fc0c3038ce7e
+
+
+# ╔═╡ cd4d57ed-0de6-4f0c-bb31-dc0605c64133
+md"# 👩👨🧑 📈📉📈 Class Results"
+
 # ╔═╡ 440c5757-48c5-4100-b3f8-8b80af572204
 md"""
 !!! tip "How to load your class data?"
@@ -48,6 +54,11 @@ begin
 		md""
 	end
 end
+
+# ╔═╡ f6fedebe-0a24-4503-abfd-c0b37155bb6b
+available_scenarios = ["cheers_1", "cheers_2", "cheers_3", "cheers_4", ]; md"""
+Select a scenarios for class performance 👉 $(@bind selected_scenario_agg Select(available_scenarios))
+"""
 
 # ╔═╡ bc6f34b2-6909-4de0-8666-f80b04359061
 md"""
@@ -100,12 +111,7 @@ md"""
 
 
 # ╔═╡ fe94c8b9-02ea-4613-b7ba-030b4587ac40
-md"## 👩👨🧑 📈📉📈 Class Results"
-
-# ╔═╡ f6fedebe-0a24-4503-abfd-c0b37155bb6b
-available_scenarios = ["cheers_1", "cheers_2", "cheers_3", "cheers_4", ]; md"""
-Select a scenarios for class performance 👉 $(@bind selected_scenario_agg Select(available_scenarios))
-"""
+md"## 🧾🧾🧾 Class Data"
 
 # ╔═╡ 6a9c9501-88c1-40c2-9eca-897a09df91c8
 md"## Demand chaser (highest Cor_Qₜ_Dₜ₋₁)"
@@ -117,7 +123,7 @@ md"## Demand chaser (highest Cor_Qₜ_Dₜ₋₁)"
 
 
 # ╔═╡ 85bbeaf7-9c14-420b-9a37-399895c6058a
-md"## 🧑📈 Individual Play "
+md"# 🧑📈 Individual Play "
 
 # ╔═╡ a6da3528-ab68-4695-ba3f-043443722a2a
 	md"""
@@ -177,21 +183,20 @@ begin
 end
 
 # ╔═╡ b2c19571-95b1-4b7f-9ec1-ed83ba7b8aef
-begin # Default parameters
-	μ = 90	 
-	σ = 30
-	# distr = TruncatedNormal(μ, σ, 0, μ+3*σ)
-	distr = Normal(μ, σ)
-	
-	selling_p = 5
-	wholesale_p = 1  
-	salvage_val = 0
+begin 	
+	cheers_1 = NVModel(cost = 1, price = 5, demand = truncated(Normal(90, 30), 0, 180) )   
+	cheers_2 = cheers_2 = NVModel(cost = 4, price = 5.5, demand =  Uniform(0, 60))	
+	cheers_3 = NVModel(cost = 1.5, price = 9, demand = truncated(Normal(90, 30), 0, 180), salvage = .5 )   
+	cheers_4 = NVModel(cost = 10, price = 42, demand = DiscreteNonParametric([0,1,2],[.3,.5,.2]))
 
-	nvm = NVModel(demand=distr, price = selling_p, cost = wholesale_p, salvage = salvage_val);
+	nvms = Dict("cheers_1" => cheers_1, "cheers_2" => cheers_2, "cheers_3" => cheers_3, "cheers_4" => cheers_4)
+		
+	selected_nvm = nvms[selected_scenario_agg]
 	
-	Co = overage_cost(nvm)
-	Cu = underage_cost(nvm)
-	CF = critical_fractile(nvm)
+	Qopt = q_opt(selected_nvm)
+	Co = overage_cost(selected_nvm)
+	Cu = underage_cost(selected_nvm)
+	CF = critical_fractile(selected_nvm)
 	CF_percent = my_round(100*CF)	
 	
 	
@@ -281,8 +286,8 @@ end
 # ╔═╡ 7d6dfb80-5a6c-4559-a325-490af3da2263
 Foldable("Click here to see the calculation",
 	begin
-	qs = [90.0, 100, 115]
-	monthly_profits = [NewsvendorModel.profit(nvm, q) * 30 for q in qs]
+	qs = [90.0, 100, q_opt(selected_nvm)]
+	monthly_profits = [NewsvendorModel.profit(selected_nvm, q) * 30 for q in qs]
 	
 	# push!(qs, mean(df_res[:,:AvgStock]))
 	# push!(monthly_profits, 30*mean(df_res[:,:ExpProfit]))
@@ -297,9 +302,9 @@ let
 	gr()
 	bar(qs, monthly_incomes, xlabel="Owners' Income per Month (Assuming Fix Cost = 5000)", legend = false, orientation = :h, title="  13 % Higher Income Possible", yaxis = nothing
 	)
-	annotate!(2000, 115, text("Optimal Quantity",14, :white))
-	annotate!(2000, 100, text("Status Quo",14, :white))
-	annotate!(2000, 90, text("Ignorant of Uncertainty",14, :white))
+	annotate!(500, Qopt, text("Optimal Quantity",14, :left, :white))
+	annotate!(500, 100, text("Status Quo",14, :left, :white))
+	annotate!(500, 90, text("Ignorant of Uncertainty",14, :left, :white))
 end
 
 # ╔═╡ 5ea60b57-f735-41c2-86cf-de6601573719
@@ -695,9 +700,9 @@ begin
 		return	Statistics.cor(sd.qs[2:n], sd.demands[1:n-1])
 	end; 
 	
-	function fluctuationloss(logfile)
+	function fluctuationloss(logfile, scenario)
 		dict_simlogs_ind = TOML.parsefile(logfile)
-		simlog_ind = from_dict(SimLog, dict_simlogs_ind["log"][selected_scenario_ind])
+		simlog_ind = from_dict(SimLog, dict_simlogs_ind["log"][scenario])
 		sim_data_ind = simlog_to_simdata(simlog_ind)
 		sim_data_ind_const = simlog_to_simdata(simlog_ind)
 		update_sim_data!(sim_data_ind)
@@ -715,14 +720,6 @@ if selected_class != ""
 	simlogs = simlog_dir[occursin.(r".*\.toml", simlog_dir)]
 
 
-	cheers_1 = NVModel(cost = 1, price = 5, demand = truncated(Normal(90, 30), 0, 180) )   
-	cheers_2 = cheers_2 = NVModel(cost = 4, price = 5.5, demand =  Uniform(0, 60))	
-	cheers_3 = NVModel(cost = 1.5, price = 9, demand = truncated(Normal(90, 30), 0, 180), salvage = .5 )   
-	cheers_4 = NVModel(cost = 10, price = 42, demand = DiscreteNonParametric([0,1,2],[.3,.5,.2]))
-
-	selected_cheers = Dict("cheers_1" => cheers_1, "cheers_2" => cheers_2, "cheers_3" => cheers_3, "cheers_4" => cheers_4)[selected_scenario_agg]
-	
-	
 	df_res = DataFrame(:FileName => simlogs)
 	insertcols!(df_res, 		:ID => "", 
 								:DaysPlayed => 0, 
@@ -750,7 +747,7 @@ if selected_class != ""
 				row.AvgDemand = sd.avg_demand |> my_round
 				row.TotalProfit = sd.total_profit	
 				row.Cor_Qₜ_Dₜ₋₁ = cor_Qₜ_Dₜ₋₁(sd) |> my_round
-				row.FluctuationLoss = fluctuationloss(logfile)
+				row.FluctuationLoss = fluctuationloss(logfile, selected_scenario_agg)
 				row.Std_Q = Statistics.std(sd.qs) |> my_round
 				row.Cor_Qₜ_Dₜ₋₁xFluctuationLoss = row.Cor_Qₜ_Dₜ₋₁ .* row.FluctuationLoss   |> my_round
 			end
@@ -773,11 +770,11 @@ if @isdefined df_res
 		ymax = 1.1 * maximum(df_res[!,:TotalProfit])
 		plot(title="Each point represents one student (AvgDemand⬆️ ➡ Color Brighter 🔆) ", titlefontsize = 12,
 			xlabel="Decision (Average Stock)", ylabel="Outcome (Total Profit)",legend=false,
-			xlims=(minimum(selected_cheers.demand),maximum(selected_cheers.demand)), ylims=(0,ymax),
+			xlims=(minimum(selected_nvm.demand),maximum(selected_nvm.demand)), ylims=(0,ymax),
 			size = (650,400)
 		)
-		vline!([mean(selected_cheers.demand)], lw=1)
-		vline!([q_opt(selected_cheers)], lw=1)
+		vline!([mean(selected_nvm.demand)], lw=1)
+		vline!([q_opt(selected_nvm)], lw=1)
 		scatter!(df_res[!,:AvgStock], df_res[!,:TotalProfit], markersize = 8, marker_z=df_res[!,:AvgDemand])
 	end
 else
@@ -796,11 +793,11 @@ if @isdefined df_res
 		ymax = 1.1 * maximum(df_res[!,:ExpProfit])
 		plot(title="Each point represents one student (AvgDemand⬆️ ➡ Color Brighter 🔆) ", titlefontsize = 12,
 			xlabel="Decision (Average Stock)", ylabel="Decision Quality (Expected Profit)",legend=false,
-			xlims=(minimum(selected_cheers.demand),maximum(selected_cheers.demand)), ylims=(0,ymax),
+			xlims=(minimum(selected_nvm.demand),maximum(selected_nvm.demand)), ylims=(0,ymax),
 			size = (650,400)
 		)
-		vline!([mean(selected_cheers.demand)], lw=1)
-		vline!([q_opt(selected_cheers)], lw=1)
+		vline!([mean(selected_nvm.demand)], lw=1)
+		vline!([q_opt(selected_nvm)], lw=1)
 		scatter!(df_res[!,:AvgStock], df_res[!,:ExpProfit], markersize = 8, marker_z=df_res[!,:AvgDemand])
 	end
 else
@@ -832,7 +829,7 @@ if @isdefined df_res
 		update_sim_data!(sim_demand_chaser_const)
 		const_profit = sim_demand_chaser_const.total_profit        
 		for i in 1:length(sim_demand_chaser_const.qs)
-			sim_demand_chaser_const.qs[i] = 115
+			sim_demand_chaser_const.qs[i] = Qopt
 		end
 		update_sim_data!(sim_demand_chaser_const)
 		opt_profit = sim_demand_chaser_const.total_profit        
@@ -843,7 +840,7 @@ Here, simply ordering the average $(round(Int,demand_chaser_avg_q)) would result
 
 
 """
-# (ordering 115 would have given $(percentup(profit, opt_profit)) higher profit)
+# (ordering Qopt would have given $(percentup(profit, opt_profit)) higher profit)
 	end
 end
 end
@@ -873,7 +870,7 @@ begin
 	monthly_incomess = copy(monthly_incomes)
 	gr()
 	if no_variation
-		push!(monthly_incomess, 30*profit(nvm, qss[end])-5000)
+		push!(monthly_incomess, 30*profit(selected_nvm, qss[end])-5000)
 	else
 		push!(monthly_incomess, 30*mean(df_res[:,:ExpProfit])-5000)
 	end
@@ -882,7 +879,7 @@ begin
 	)
 	
 	annotate!(200, qss[end], text("Your Class Average",14, :white, :left))
-	annotate!(200, 115, text("Optimal Quantity",14, :white, :left))
+	annotate!(200, Qopt, text("Optimal Quantity",14, :white, :left))
 	annotate!(200, 100, text("Status Quo",14, :white, :left))
 	annotate!(200, 90, text("Ignorant of Uncertainty",14, :white, :left))
 end
@@ -896,42 +893,6 @@ Want to see the expected result had you always ordered $(round(Int,mean(df_res[:
 
 # ╔═╡ 53b86fb2-3fe6-4670-b56e-a67dade1d0a4
 describe(df_res)
-
-# ╔═╡ 9291309e-a430-4f54-802a-69b3fbf331bf
-let
-if @isdefined df_res 
-	if nrow(df_res) > 0
-		plotly()
-		ymax = 1.1 * maximum(df_res[!,:TotalProfit])
-		plot(title="Each point represents one student (AvgDemand⬆️ ➡ Color Brighter 🔆) ", titlefontsize = 12,
-			xlabel="Decision (Average Stock)", ylabel="Outcome (Total Profit)",legend=false,
-			xlims=(minimum(selected_cheers.demand),maximum(selected_cheers.demand)), ylims=(0,ymax),
-			size = (650,400)
-		)
-		vline!([mean(selected_cheers.demand)], lw=1)
-		vline!([q_opt(selected_cheers)], lw=1)
-		scatter!(df_res[!,:AvgStock], df_res[!,:TotalProfit], markersize = 8, marker_z=df_res[!,:AvgDemand])
-	end
-end
-end
-
-# ╔═╡ 197beaa0-8ce7-4d80-83a0-cc29d93e992b
-let
-if @isdefined df_res 
-	if nrow(df_res) > 0
-		plotly()
-		ymax = 1.1 * maximum(df_res[!,:ExpProfit])
-		plot(title="Each point represents one student (AvgDemand⬆️ ➡ Color Brighter 🔆) ", titlefontsize = 12,
-			xlabel="Decision (Average Stock)", ylabel="Decision Quality (Expected Profit)",legend=false,
-			xlims=(minimum(selected_cheers.demand),maximum(selected_cheers.demand)), ylims=(0,ymax),
-			size = (650,400)
-		)
-		vline!([mean(selected_cheers.demand)], lw=1)
-		vline!([q_opt(selected_cheers)], lw=1)
-		scatter!(df_res[!,:AvgStock], df_res[!,:ExpProfit], markersize = 8, marker_z=df_res[!,:AvgDemand])
-	end
-end
-end
 
 # ╔═╡ 83f177a7-a07f-492d-a283-252e5b9f4966
 let
@@ -971,7 +932,7 @@ if @isdefined df_res
 		update_sim_data!(sim_demand_chaser_const)
 		const_profit = sim_demand_chaser_const.total_profit        
 		for i in 1:length(sim_demand_chaser_const.qs)
-			sim_demand_chaser_const.qs[i] = 115
+			sim_demand_chaser_const.qs[i] = Qopt
 		end
 		update_sim_data!(sim_demand_chaser_const)
 		opt_profit = sim_demand_chaser_const.total_profit        
@@ -2641,58 +2602,58 @@ version = "0.9.1+5"
 """
 
 # ╔═╡ Cell order:
-# ╟─440c5757-48c5-4100-b3f8-8b80af572204
-# ╟─106c6b6a-a4c2-4ca1-9343-416ad4127648
-# ╟─6cd866f3-2e0d-47c9-b585-e8bac0936f6d
-# ╟─97826684-aeb4-4f54-8230-722104acbbaf
-# ╟─20f6d71e-d930-4cb6-9656-a355e2a25db1
-# ╟─760bcbea-484b-4c79-ac9b-458aaeb8a083
-# ╟─bc6f34b2-6909-4de0-8666-f80b04359061
-# ╟─58994e41-e952-42b8-9c44-3e59236dff93
-# ╟─7d6dfb80-5a6c-4559-a325-490af3da2263
-# ╟─4ba5c1f0-60b2-47c9-8220-7836e84b9ce8
-# ╟─dd7d0c32-a70e-4de9-abba-77124b47e58b
-# ╟─71faa189-c00b-4092-939e-3f9b8013a8b2
-# ╟─e4c09f88-35c6-4382-9b44-6998f5402cb6
-# ╟─be3fe754-e633-45b1-bc0e-ab1cf3aec3ac
-# ╟─6f1a80c0-3ba3-42dd-9f35-135062b370e4
-# ╟─a90e8c05-f0a5-488d-b802-84bdaa29fa36
-# ╟─cfb7ebea-9c49-4af3-90cb-90cfc8be6744
-# ╟─7f5c31e6-a362-46ec-abc5-0ef459d17d3b
-# ╟─7fa8651e-4db4-4809-9c1c-4586a66c9e50
-# ╟─0fe0d06e-0c7e-4acd-8630-634f00b3a520
-# ╟─4d94e0f7-7c87-442f-9f60-4bacb474a484
-# ╟─66025ac7-47d6-4c11-83fa-befff248e2ea
-# ╟─bbaff929-0f20-4e58-8930-430be3f03d71
-# ╟─cea3f4ee-5ba2-4317-ab62-8a949abf7a33
-# ╟─9f16663d-0fac-47eb-9706-be738fa5d5f5
-# ╟─a31d8f99-7487-4935-988b-9717c1ab9289
-# ╟─5f7cf638-cbf8-48f8-a8bb-b1ebf5ba88ab
-# ╟─fe94c8b9-02ea-4613-b7ba-030b4587ac40
-# ╟─f6fedebe-0a24-4503-abfd-c0b37155bb6b
-# ╟─d04db0f4-1e2d-4c60-ace7-df4500ff6a79
-# ╟─53b86fb2-3fe6-4670-b56e-a67dade1d0a4
-# ╟─9291309e-a430-4f54-802a-69b3fbf331bf
-# ╟─197beaa0-8ce7-4d80-83a0-cc29d93e992b
-# ╟─6a9c9501-88c1-40c2-9eca-897a09df91c8
-# ╟─83f177a7-a07f-492d-a283-252e5b9f4966
-# ╟─a6bf2500-0418-488c-a5ff-69cba2e9d1f7
-# ╟─c66fbdda-c918-45a6-99ac-75815d5dd79f
-# ╟─b6aae19e-2b3e-4d98-9ef9-c41d263fe1bb
-# ╟─47bad2aa-051e-4ef0-97b6-2d94641b1a5d
-# ╟─85bbeaf7-9c14-420b-9a37-399895c6058a
-# ╟─a6da3528-ab68-4695-ba3f-043443722a2a
-# ╟─ae6065cc-4729-4084-abc5-68fc75500888
-# ╟─03d902b7-13fc-430c-ab9b-c1842f3cb004
-# ╟─c11abe2f-2304-4014-aeff-0d79827e6d48
-# ╟─6c9d5065-c174-4763-a535-b9aacf4d4edc
-# ╟─c580aaae-7e6b-4a74-b360-d0e99322b82c
-# ╟─e0d09197-fc18-46e9-b0f9-b513ea32596a
-# ╟─b2c19571-95b1-4b7f-9ec1-ed83ba7b8aef
-# ╟─375b5f20-ff08-4d9a-8d41-38214db962de
-# ╟─b89d8514-2b56-4da9-8f49-e464579c2293
-# ╟─c8618313-9982-44e0-a110-2d75c69c75e8
-# ╟─5ea60b57-f735-41c2-86cf-de6601573719
-# ╟─ad6ffaf5-4cfe-4926-88f9-e36ffe10ef44
+# ╠═20f6d71e-d930-4cb6-9656-a355e2a25db1
+# ╠═84017a5c-bb38-417b-96b3-fc0c3038ce7e
+# ╠═cd4d57ed-0de6-4f0c-bb31-dc0605c64133
+# ╠═440c5757-48c5-4100-b3f8-8b80af572204
+# ╠═106c6b6a-a4c2-4ca1-9343-416ad4127648
+# ╠═6cd866f3-2e0d-47c9-b585-e8bac0936f6d
+# ╠═97826684-aeb4-4f54-8230-722104acbbaf
+# ╠═f6fedebe-0a24-4503-abfd-c0b37155bb6b
+# ╠═760bcbea-484b-4c79-ac9b-458aaeb8a083
+# ╠═bc6f34b2-6909-4de0-8666-f80b04359061
+# ╠═58994e41-e952-42b8-9c44-3e59236dff93
+# ╠═7d6dfb80-5a6c-4559-a325-490af3da2263
+# ╠═4ba5c1f0-60b2-47c9-8220-7836e84b9ce8
+# ╠═dd7d0c32-a70e-4de9-abba-77124b47e58b
+# ╠═71faa189-c00b-4092-939e-3f9b8013a8b2
+# ╠═e4c09f88-35c6-4382-9b44-6998f5402cb6
+# ╠═be3fe754-e633-45b1-bc0e-ab1cf3aec3ac
+# ╠═6f1a80c0-3ba3-42dd-9f35-135062b370e4
+# ╠═a90e8c05-f0a5-488d-b802-84bdaa29fa36
+# ╠═cfb7ebea-9c49-4af3-90cb-90cfc8be6744
+# ╠═7f5c31e6-a362-46ec-abc5-0ef459d17d3b
+# ╠═7fa8651e-4db4-4809-9c1c-4586a66c9e50
+# ╠═0fe0d06e-0c7e-4acd-8630-634f00b3a520
+# ╠═4d94e0f7-7c87-442f-9f60-4bacb474a484
+# ╠═66025ac7-47d6-4c11-83fa-befff248e2ea
+# ╠═bbaff929-0f20-4e58-8930-430be3f03d71
+# ╠═cea3f4ee-5ba2-4317-ab62-8a949abf7a33
+# ╠═9f16663d-0fac-47eb-9706-be738fa5d5f5
+# ╠═a31d8f99-7487-4935-988b-9717c1ab9289
+# ╠═5f7cf638-cbf8-48f8-a8bb-b1ebf5ba88ab
+# ╠═fe94c8b9-02ea-4613-b7ba-030b4587ac40
+# ╠═d04db0f4-1e2d-4c60-ace7-df4500ff6a79
+# ╠═53b86fb2-3fe6-4670-b56e-a67dade1d0a4
+# ╠═6a9c9501-88c1-40c2-9eca-897a09df91c8
+# ╠═83f177a7-a07f-492d-a283-252e5b9f4966
+# ╠═a6bf2500-0418-488c-a5ff-69cba2e9d1f7
+# ╠═c66fbdda-c918-45a6-99ac-75815d5dd79f
+# ╠═b6aae19e-2b3e-4d98-9ef9-c41d263fe1bb
+# ╠═47bad2aa-051e-4ef0-97b6-2d94641b1a5d
+# ╠═85bbeaf7-9c14-420b-9a37-399895c6058a
+# ╠═a6da3528-ab68-4695-ba3f-043443722a2a
+# ╠═ae6065cc-4729-4084-abc5-68fc75500888
+# ╠═03d902b7-13fc-430c-ab9b-c1842f3cb004
+# ╠═c11abe2f-2304-4014-aeff-0d79827e6d48
+# ╠═6c9d5065-c174-4763-a535-b9aacf4d4edc
+# ╠═c580aaae-7e6b-4a74-b360-d0e99322b82c
+# ╠═e0d09197-fc18-46e9-b0f9-b513ea32596a
+# ╠═b2c19571-95b1-4b7f-9ec1-ed83ba7b8aef
+# ╠═375b5f20-ff08-4d9a-8d41-38214db962de
+# ╠═b89d8514-2b56-4da9-8f49-e464579c2293
+# ╠═c8618313-9982-44e0-a110-2d75c69c75e8
+# ╠═5ea60b57-f735-41c2-86cf-de6601573719
+# ╠═ad6ffaf5-4cfe-4926-88f9-e36ffe10ef44
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
