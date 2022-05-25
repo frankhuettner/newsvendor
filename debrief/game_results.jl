@@ -198,10 +198,13 @@ begin
 	Cu = underage_cost(selected_nvm)
 	CF = critical_fractile(selected_nvm)
 	CF_percent = my_round(100*CF)	
-	
+	μ = mean(selected_nvm.demand)
 	
 	md""
 end
+
+# ╔═╡ 1bb39671-cf79-4c29-a02e-f4250d5c06bc
+md""" 👉 Guess some monthly fixed cost $(@bind fixcost NumberField(0:100:round(Int,30*profit(selected_nvm)), default = 5000)) €  """
 
 # ╔═╡ c8618313-9982-44e0-a110-2d75c69c75e8
 begin
@@ -291,16 +294,18 @@ Foldable("Click here to see the calculation",
 	
 	# push!(qs, mean(df_res[:,:AvgStock]))
 	# push!(monthly_profits, 30*mean(df_res[:,:ExpProfit]))
-	monthly_incomes = monthly_profits .- 5000 
-	fixed = [ 5000 for i in monthly_incomes]
+	monthly_incomes = monthly_profits .- fixcost 
+	fixed = [ fixcost for i in monthly_incomes]
 	df = DataFrame("# Cakes Made" => qs, "Expected Monthly Profit Contributon" => monthly_profits, "Fixed Cost (Rent + Staff)" => fixed, "Owners' Income" => monthly_incomes)
 	end
 )
 
 # ╔═╡ 58994e41-e952-42b8-9c44-3e59236dff93
 let
+	potinc = percentup(30*profit(selected_nvm, μ)-fixcost, 30*profit(selected_nvm)-fixcost)
 	gr()
-	bar(qs, monthly_incomes, xlabel="Owners' Income per Month (Assuming Fix Cost = 5000)", legend = false, orientation = :h, title="  13 % Higher Income Possible", yaxis = nothing
+	bar(qs, monthly_incomes, xlabel="Owners' Income per Month (Assuming Fix Cost = $(fixcost))", legend = false, orientation = :h, title="  $(potinc) Higher Income Possible", yaxis = nothing,
+	xformatter = :plain 
 	)
 	annotate!(500, Qopt, text("Optimal Quantity",14, :left, :white))
 	annotate!(500, 100, text("Status Quo",14, :left, :white))
@@ -870,12 +875,12 @@ begin
 	monthly_incomess = copy(monthly_incomes)
 	gr()
 	if no_variation
-		push!(monthly_incomess, 30*profit(selected_nvm, qss[end])-5000)
+		push!(monthly_incomess, 30*profit(selected_nvm, qss[end])-fixcost)
 	else
-		push!(monthly_incomess, 30*mean(df_res[:,:ExpProfit])-5000)
+		push!(monthly_incomess, 30*mean(df_res[:,:ExpProfit])-fixcost)
 	end
 	potential =percentup(monthly_incomess[end],monthly_incomess[3])
-	bar(qss, monthly_incomess, ylabel="# Cakes Made", xlabel="Owners' Income per Month (Assuming Fix Cost = 5000)", legend = false, orientation = :h, title="$(potential) Higher Income Possible"
+	bar(qss, monthly_incomess, ylabel="# Cakes Made", xlabel="Owners' Income per Month (Assuming Fix Cost = fixcost)", legend = false, orientation = :h, title="$(potential) Higher Income Possible"
 	)
 	
 	annotate!(200, qss[end], text("Your Class Average",14, :white, :left))
@@ -2602,58 +2607,59 @@ version = "0.9.1+5"
 """
 
 # ╔═╡ Cell order:
-# ╟─20f6d71e-d930-4cb6-9656-a355e2a25db1
-# ╟─84017a5c-bb38-417b-96b3-fc0c3038ce7e
-# ╟─cd4d57ed-0de6-4f0c-bb31-dc0605c64133
-# ╟─440c5757-48c5-4100-b3f8-8b80af572204
-# ╟─106c6b6a-a4c2-4ca1-9343-416ad4127648
-# ╟─6cd866f3-2e0d-47c9-b585-e8bac0936f6d
-# ╟─97826684-aeb4-4f54-8230-722104acbbaf
-# ╟─f6fedebe-0a24-4503-abfd-c0b37155bb6b
-# ╟─760bcbea-484b-4c79-ac9b-458aaeb8a083
-# ╟─bc6f34b2-6909-4de0-8666-f80b04359061
-# ╟─58994e41-e952-42b8-9c44-3e59236dff93
-# ╟─7d6dfb80-5a6c-4559-a325-490af3da2263
-# ╟─4ba5c1f0-60b2-47c9-8220-7836e84b9ce8
-# ╟─dd7d0c32-a70e-4de9-abba-77124b47e58b
-# ╟─71faa189-c00b-4092-939e-3f9b8013a8b2
-# ╟─e4c09f88-35c6-4382-9b44-6998f5402cb6
-# ╟─be3fe754-e633-45b1-bc0e-ab1cf3aec3ac
-# ╟─6f1a80c0-3ba3-42dd-9f35-135062b370e4
-# ╟─a90e8c05-f0a5-488d-b802-84bdaa29fa36
-# ╟─cfb7ebea-9c49-4af3-90cb-90cfc8be6744
-# ╟─7f5c31e6-a362-46ec-abc5-0ef459d17d3b
-# ╟─7fa8651e-4db4-4809-9c1c-4586a66c9e50
-# ╟─0fe0d06e-0c7e-4acd-8630-634f00b3a520
-# ╟─4d94e0f7-7c87-442f-9f60-4bacb474a484
-# ╟─66025ac7-47d6-4c11-83fa-befff248e2ea
-# ╟─bbaff929-0f20-4e58-8930-430be3f03d71
-# ╟─cea3f4ee-5ba2-4317-ab62-8a949abf7a33
-# ╟─9f16663d-0fac-47eb-9706-be738fa5d5f5
-# ╟─a31d8f99-7487-4935-988b-9717c1ab9289
-# ╟─5f7cf638-cbf8-48f8-a8bb-b1ebf5ba88ab
-# ╟─fe94c8b9-02ea-4613-b7ba-030b4587ac40
-# ╟─d04db0f4-1e2d-4c60-ace7-df4500ff6a79
-# ╟─53b86fb2-3fe6-4670-b56e-a67dade1d0a4
-# ╟─6a9c9501-88c1-40c2-9eca-897a09df91c8
-# ╟─83f177a7-a07f-492d-a283-252e5b9f4966
-# ╟─a6bf2500-0418-488c-a5ff-69cba2e9d1f7
-# ╟─c66fbdda-c918-45a6-99ac-75815d5dd79f
-# ╟─b6aae19e-2b3e-4d98-9ef9-c41d263fe1bb
-# ╟─47bad2aa-051e-4ef0-97b6-2d94641b1a5d
-# ╟─85bbeaf7-9c14-420b-9a37-399895c6058a
-# ╟─a6da3528-ab68-4695-ba3f-043443722a2a
-# ╟─ae6065cc-4729-4084-abc5-68fc75500888
-# ╟─03d902b7-13fc-430c-ab9b-c1842f3cb004
-# ╟─c11abe2f-2304-4014-aeff-0d79827e6d48
-# ╟─6c9d5065-c174-4763-a535-b9aacf4d4edc
-# ╟─c580aaae-7e6b-4a74-b360-d0e99322b82c
-# ╟─e0d09197-fc18-46e9-b0f9-b513ea32596a
-# ╟─b2c19571-95b1-4b7f-9ec1-ed83ba7b8aef
+# ╠═20f6d71e-d930-4cb6-9656-a355e2a25db1
+# ╠═84017a5c-bb38-417b-96b3-fc0c3038ce7e
+# ╠═cd4d57ed-0de6-4f0c-bb31-dc0605c64133
+# ╠═440c5757-48c5-4100-b3f8-8b80af572204
+# ╠═106c6b6a-a4c2-4ca1-9343-416ad4127648
+# ╠═6cd866f3-2e0d-47c9-b585-e8bac0936f6d
+# ╠═97826684-aeb4-4f54-8230-722104acbbaf
+# ╠═f6fedebe-0a24-4503-abfd-c0b37155bb6b
+# ╠═760bcbea-484b-4c79-ac9b-458aaeb8a083
+# ╠═bc6f34b2-6909-4de0-8666-f80b04359061
+# ╠═1bb39671-cf79-4c29-a02e-f4250d5c06bc
+# ╠═58994e41-e952-42b8-9c44-3e59236dff93
+# ╠═7d6dfb80-5a6c-4559-a325-490af3da2263
+# ╠═4ba5c1f0-60b2-47c9-8220-7836e84b9ce8
+# ╠═dd7d0c32-a70e-4de9-abba-77124b47e58b
+# ╠═71faa189-c00b-4092-939e-3f9b8013a8b2
+# ╠═e4c09f88-35c6-4382-9b44-6998f5402cb6
+# ╠═be3fe754-e633-45b1-bc0e-ab1cf3aec3ac
+# ╠═6f1a80c0-3ba3-42dd-9f35-135062b370e4
+# ╠═a90e8c05-f0a5-488d-b802-84bdaa29fa36
+# ╠═cfb7ebea-9c49-4af3-90cb-90cfc8be6744
+# ╠═7f5c31e6-a362-46ec-abc5-0ef459d17d3b
+# ╠═7fa8651e-4db4-4809-9c1c-4586a66c9e50
+# ╠═0fe0d06e-0c7e-4acd-8630-634f00b3a520
+# ╠═4d94e0f7-7c87-442f-9f60-4bacb474a484
+# ╠═66025ac7-47d6-4c11-83fa-befff248e2ea
+# ╠═bbaff929-0f20-4e58-8930-430be3f03d71
+# ╠═cea3f4ee-5ba2-4317-ab62-8a949abf7a33
+# ╠═9f16663d-0fac-47eb-9706-be738fa5d5f5
+# ╠═a31d8f99-7487-4935-988b-9717c1ab9289
+# ╠═5f7cf638-cbf8-48f8-a8bb-b1ebf5ba88ab
+# ╠═fe94c8b9-02ea-4613-b7ba-030b4587ac40
+# ╠═d04db0f4-1e2d-4c60-ace7-df4500ff6a79
+# ╠═53b86fb2-3fe6-4670-b56e-a67dade1d0a4
+# ╠═6a9c9501-88c1-40c2-9eca-897a09df91c8
+# ╠═83f177a7-a07f-492d-a283-252e5b9f4966
+# ╠═a6bf2500-0418-488c-a5ff-69cba2e9d1f7
+# ╠═c66fbdda-c918-45a6-99ac-75815d5dd79f
+# ╠═b6aae19e-2b3e-4d98-9ef9-c41d263fe1bb
+# ╠═47bad2aa-051e-4ef0-97b6-2d94641b1a5d
+# ╠═85bbeaf7-9c14-420b-9a37-399895c6058a
+# ╠═a6da3528-ab68-4695-ba3f-043443722a2a
+# ╠═ae6065cc-4729-4084-abc5-68fc75500888
+# ╠═03d902b7-13fc-430c-ab9b-c1842f3cb004
+# ╠═c11abe2f-2304-4014-aeff-0d79827e6d48
+# ╠═6c9d5065-c174-4763-a535-b9aacf4d4edc
+# ╠═c580aaae-7e6b-4a74-b360-d0e99322b82c
+# ╠═e0d09197-fc18-46e9-b0f9-b513ea32596a
+# ╠═b2c19571-95b1-4b7f-9ec1-ed83ba7b8aef
 # ╟─375b5f20-ff08-4d9a-8d41-38214db962de
 # ╟─b89d8514-2b56-4da9-8f49-e464579c2293
 # ╟─c8618313-9982-44e0-a110-2d75c69c75e8
 # ╟─5ea60b57-f735-41c2-86cf-de6601573719
-# ╟─ad6ffaf5-4cfe-4926-88f9-e36ffe10ef44
+# ╠═ad6ffaf5-4cfe-4926-88f9-e36ffe10ef44
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
