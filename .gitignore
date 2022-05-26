@@ -36,5 +36,7 @@ demo/*.toml
 
 debrief/debrief_newsvendor.jl
 debrief/debrief_newsvendor.jl.html
-debrief/game_results_fathomd.jl
-debrief/data/fathomd
+
+debrief/newsvendor_solution_fathomd.jl
+
+debrief/newsvendor_tool.jl

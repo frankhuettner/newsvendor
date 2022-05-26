@@ -23,17 +23,19 @@ md"""
 ### Demand
 * Expected demand `μ`= $(@bind mu NumberField(0:10_000, default=50))
 * Standard deviation `σ` = $(@bind sigma NumberField(0:10_000, default=20))
-* Lower bound = $(@bind l NumberField(0:10_000, default=0)) Upper bound = $(@bind u NumberField(0:1_000_000, default=300))
+* Lower bound = $(@bind l NumberField(0:10_000, default=0)) 
+* Upper bound = $(@bind u NumberField(0:1_000_000, default=300))
 
 ### Unit values
 
 * Unit cost = $(@bind c NumberField(0:10_000, default=5))
 * Unit price = $(@bind p NumberField(0:10_000, default=7))
-* Salvage value = $(@bind s NumberField(0:10_000, default=0)) ``~~~~~~``Back-order unit penalty = $(@bind b NumberField(0:10_000, default=0))
+* Salvage value = $(@bind s NumberField(0:10_000, default=0)) 
+* Back-order unit penalty = $(@bind b NumberField(0:10_000, default=0))
 
 ### Bounds on resulting quantity 
-Minimal feasible quantity = $(@bind qmin NumberField(0:10_000, default=0))
-``~~~~~~``Maximal feasible chosen = $(@bind qmax NumberField(0:10_000, default=1_000_000))
+* Minimal feasible quantity = $(@bind qmin NumberField(0:10_000, default=0))
+* Maximal feasible chosen = $(@bind qmax NumberField(0:10_000, default=1_000_000))
 """
 
 # ╔═╡ 61cb8315-7a59-4d7a-bd96-bc05ff172929
