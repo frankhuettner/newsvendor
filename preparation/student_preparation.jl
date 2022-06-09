@@ -63,27 +63,36 @@ md"""
 ## Patisserie *Cheers!* 
 
 
-A few years ago, Kay and Lucilla established their patisserie Cheers! and this year’s season has started out well. However, they still can’t agree on how to deal with a serious problem they've been facing since the very beginning: how many cakes to produce each day.
+A few years ago, Kay and Lucilla established their patisserie *Cheers!* and this year has started out well. However, they still can’t agree on how to deal with a serious problem they've been facing since the very beginning. 
 
-The cakes they make are of the highest quality and thus come at a high price, both for them as producers, and also for their customers, who pay $ 5 for each artisanal mini cake that Cheers! produces. But their customers appear content with this price, as they tend to keep coming back for more. Multiple regular clients have said their prices are justified given the quality of ingredients, the freshness of the cakes, and the service that Kay and Lucilla provide.
+The cakes they make are of the highest quality and thus come at a high price, both for them as producers, and also for their customers, who pay €5 for each artisanal mini cake that *Cheers!* produces. But their customers appear content with this price, as they tend to keep coming back for more. Multiple regular clients have said their prices are justified given the quality of ingredients, the freshness of the cakes, and the service that Kay and Lucilla provide.
 
-After a long day with very few customers, Kay still had some work to do: Recently, they signed up for a service that organizes the donation of leftover food to people in need. She put the 28 cakes that were left over from that day into a box and waited for the courier to come pick it up.
+After a long day with very few customers, Kay had still some work to do. Recently, they signed up for a service that organizes the donation of leftover food to people in need. Her last task of that day was to put the 28 cakes that were left over into a box, and to wait for the courier to come pick it up.
 
-While waiting, Kay and Lucilla fell into their familiar argument about how many cakes they should be producing each day. Lucilla stressed that the excess they’re donating today aren’t such a big loss, given that they only cost $ 1 each to produce. But Kay hated that they worked so hard to produce these cakes and then saw nothing in return. Lucilla countered that they often have days where they have to turn customers away because they sell out.
+While waiting, Kay and Lucilla fell into their familiar argument about how many cakes they should be producing each day. Lucilla stressed that the excess they’re donating today isn’t such a big loss. "It only cost about €1 to produce a cake." But Kay hated that they worked so hard to craft these cakes and then saw nothing in return. Lucilla countered that it hurts even more when they have to turn customers away because they sell out.
 
-Kay was motivated to discuss the issue again. Waiting for the courier, she scrambled up the sales data from the past year. Even though they sell out almost every other day (they prepared 100 cakes each day), the fluctuation of customers was a serious problem and let to a lot of leftover cakes. Putting the sales data into a histogram made this very clear.
+Kay was motivated to discuss the issue again. Sitting at her laptop, she scrambled up the sales data from the past year. Even though they sell out almost every other day (they prepared 100 cakes each day), the fluctuation of customers was a serious problem and led to a lot of leftover cakes. Putting the sales data into a histogram made this very clear.
 
 ![](https://github.com/frankhuettner/newsvendor/blob/main/scenarios/img/cheers_1_story_histogram.svg?raw=true)
 
-At first she was confused about the shape. But it became clear that sales were between 95 and 105 cakes on 163 days last year because it contains all the many days when they sold out. On the other days, the had cakes left over.
+At first she was confused about the shape of the figure. Then she realized that sales were capped at 100. The spike between 95 and 105 cakes included all of the days when they sold out. On all other days, they had cakes left over.
 
-Kay was convinced that extending the graph would make this demand looks like a bell curve, originating from a normal distribution. She was not only an excellent creator of mini cakes but also a very creative solver of problems and  she googled right away on how to plot a bell curve in Excel. Moving it above the histogram, the combined picture looked best with the mean parameter μ = 90 and the standard deviation parameter σ = 30.
+Kay was convinced that the graph resembles a bell curve, as if demand is randomly drawn from a normal distribution. She was not only an excellent creator of mini cakes but also a very creative solver of problems and she googled right away on how to plot a bell curve in Excel. Moving it above the histogram, the combined picture looked best with the mean parameter μ = 90 and the standard deviation parameter σ = 30.
 
 ![](https://github.com/frankhuettner/newsvendor/blob/main/scenarios/img/cheers_1_story_histogram_with_curve.svg?raw=true)
 
-So according to Kay's analysis, the most likely demand is at 90. Why were they making 100 cakes each day? Lucilla had a different take on the analysis. According to that bell curve, demand is between 60 and 120 on 68% of the days. She then argued that if only they produced enough, they could even sell perhaps 150 cakes on some days.
+In view of the data, Kay felt reassured. "Look, we should make 90 cakes each day -- it's our best bet to meet demand. Making 100 is a waste!" Lucilla had a different reaction to the analysis. Trying to make sense of what she saw, she remembered the [68–95–99.7 rule](https://en.wikipedia.org/wiki/68%E2%80%9395%E2%80%9399.7_rule). Applied to their sales numbers, it means that demand happens to be below 60 or above 120 on 32% of the days. It was then that she begun to grasp the uncertainty pervading their business and -- being their only source of income -- their lives, accompanied by a paralyzing feeling she usually keeps tucked away. Rather resignedly, she concluded that "unless we become fortune tellers, there's nothing we can do. Where there's no solution, there is no problem."
 
 """
+
+# ╔═╡ 40d5a8d9-2650-462f-b988-312b09b5c3a6
+
+
+# ╔═╡ ac456ed9-e9e2-4cfe-ab0f-4c91c64c2a4d
+
+
+# ╔═╡ e3f986a0-c16c-4806-9d78-6e4929931f24
+
 
 # ╔═╡ 470e083d-b4c0-465e-bdca-47be88baefb5
 randcake(n) = rand(["🍰","🧁","🍮","🎂"],n); md"""
@@ -94,7 +103,7 @@ randcake(n) = rand(["🍰","🧁","🍮","🎂"],n); md"""
 md"""
 ## Simulation Outlook
 
-In the simulation, you will make quantity decisions for the two ladies. The simulation will run for 30 days.
+In the simulation, you will make quantity decisions for the business. The simulation will run for 30 days.
 
 ### Your Task
 **At the begining of each day**, you have to make one decision:
@@ -106,7 +115,7 @@ Note that you can only make this decision once per day. **Baking further cakes d
 
 ### Your Goal
 
-Cakes that are produces and demanded throughout the dy will be sold. Cakes that are not demanded will be discarded. You incur the cost of all cakes that you make (including those that remain unsold) but receive only revenue for the cakes sold.
+Cakes that are produced and demanded throughout the dy will be sold. Cakes that are not demanded will be discarded. You incur the cost of all cakes that you make (including those that remain unsold) but receive only revenue for the cakes sold.
 
 ☝ It is your goal to **maximize your profit contribution of the cakes.**
  
@@ -201,6 +210,15 @@ md"""
 """
 
 # ╔═╡ bbe03bec-aed2-45d2-a864-6342dd4a3782
+
+
+# ╔═╡ 78f6d905-f17a-484b-a785-8dc2d876a4fa
+
+
+# ╔═╡ 4ef3cc15-5255-403d-bdd7-f779e5544a72
+
+
+# ╔═╡ f273bceb-d53d-4408-8d81-f3099244e633
 
 
 # ╔═╡ bd14e23a-aeea-4750-9c11-07c5ff030c7c
@@ -338,6 +356,12 @@ if q5 == ["a"] 	rand(yays) end
 # ╔═╡ fd86ff98-566f-4cf8-ba75-20f289d5a618
 md"""
 """
+
+# ╔═╡ 013e865b-baf7-4693-b51a-bdff95001ef1
+
+
+# ╔═╡ ba74605f-13e5-4f07-8d6e-06704e7abd46
+
 
 # ╔═╡ 632567c4-3e4c-41bc-9358-84d0e305d490
 md"""
@@ -1376,11 +1400,17 @@ version = "0.9.1+5"
 # ╟─4510b0fc-2864-4f88-827b-234a25399d6a
 # ╟─573731d0-b9b0-4040-ba1d-7eb2437666b6
 # ╟─ac3d366d-cd73-4ff4-9526-30fcd319f08b
+# ╟─40d5a8d9-2650-462f-b988-312b09b5c3a6
+# ╟─ac456ed9-e9e2-4cfe-ab0f-4c91c64c2a4d
+# ╟─e3f986a0-c16c-4806-9d78-6e4929931f24
 # ╟─470e083d-b4c0-465e-bdca-47be88baefb5
 # ╟─a23307e2-07c0-4e96-8e5a-1d17c79cc36c
 # ╟─db2347f3-dce5-476f-bfe8-ad11ac645b2f
 # ╟─9551e091-6b51-4a35-8e64-c7fdb13821c9
 # ╟─bbe03bec-aed2-45d2-a864-6342dd4a3782
+# ╟─78f6d905-f17a-484b-a785-8dc2d876a4fa
+# ╟─4ef3cc15-5255-403d-bdd7-f779e5544a72
+# ╟─f273bceb-d53d-4408-8d81-f3099244e633
 # ╟─bd14e23a-aeea-4750-9c11-07c5ff030c7c
 # ╟─36d61ce9-9c8c-46e2-844a-ce0db02d0803
 # ╟─fa570540-d30f-4eee-be93-12409be50ede
@@ -1399,6 +1429,8 @@ version = "0.9.1+5"
 # ╟─7f1126d7-9c46-48ae-af33-2e8191803aa4
 # ╟─7eb279da-9f5b-4a3b-96c9-dd14c75376c5
 # ╟─fd86ff98-566f-4cf8-ba75-20f289d5a618
+# ╟─013e865b-baf7-4693-b51a-bdff95001ef1
+# ╟─ba74605f-13e5-4f07-8d6e-06704e7abd46
 # ╟─632567c4-3e4c-41bc-9358-84d0e305d490
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
