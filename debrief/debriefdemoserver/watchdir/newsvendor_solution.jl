@@ -63,7 +63,7 @@ Cᵤ are less tangible (forgone profit)
 
 > ** -- Substitute** margin from replacing a unit with another product or with a delayed provision
 
->   +  **Badwill** or penalty from having customer unserved (backorder discount, lost goodwill, lost customer life time value, reputation loss, compensation claims...)
+>   +  **Ill will** or penalty from having customer unserved (backorder discount, lost goodwill, lost customer life time value, reputation loss, compensation claims...)
 
 
 

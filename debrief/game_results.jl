@@ -313,7 +313,7 @@ Foldable("Click here to see the calculation",
 let
 	potinc = percentup(30*profit(selected_nvm, μ)-fixcost, 30*profit(selected_nvm)-fixcost)
 	gr()
-	Plots.bar(qs, monthly_incomes, xlabel="Owners' Income per Month (Assuming Fix Cost = $(fixcost))", legend = false, orientation = :h, title="  $(potinc) Higher Income Possible", yaxis = nothing,
+	Plots.bar(qs, monthly_incomes, xlabel="Owners' Income per Month (Assuming Fixed Cost = $(fixcost))", legend = false, orientation = :h, title="  $(potinc) Higher Income Possible", yaxis = nothing,
 	xformatter = :plain 
 	)
 	annotate!(500, Qopt, text("Optimal Quantity",14, :left, :white))
@@ -894,7 +894,7 @@ begin
 		push!(monthly_incomess, 30*mean(df_res[:,:ExpProfit])-fixcost)
 	end
 	potential =percentup(monthly_incomess[end],monthly_incomess[3])
-	Plots.bar(qss, monthly_incomess, ylabel="# Cakes Made", xlabel="Owners' Income per Month (Assuming Fix Cost = fixcost)", legend = false, orientation = :h, title="$(potential) Higher Income Possible",
+	Plots.bar(qss, monthly_incomess, ylabel="# Cakes Made", xlabel="Owners' Income per Month (Assuming Fixed Cost = fixcost)", legend = false, orientation = :h, title="$(potential) Higher Income Possible",
 	)
 	
 	annotate!(200, qss[end], text("Your Class Average",14, :white, :left))
@@ -2762,7 +2762,7 @@ version = "0.9.1+5"
 # ╟─03d902b7-13fc-430c-ab9b-c1842f3cb004
 # ╟─c11abe2f-2304-4014-aeff-0d79827e6d48
 # ╟─6c9d5065-c174-4763-a535-b9aacf4d4edc
-# ╠═e0d09197-fc18-46e9-b0f9-b513ea32596a
+# ╟─e0d09197-fc18-46e9-b0f9-b513ea32596a
 # ╟─b2c19571-95b1-4b7f-9ec1-ed83ba7b8aef
 # ╟─375b5f20-ff08-4d9a-8d41-38214db962de
 # ╟─b89d8514-2b56-4da9-8f49-e464579c2293
