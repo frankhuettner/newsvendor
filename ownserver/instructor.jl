@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.9
+# v0.19.11
 
 using Markdown
 using InteractiveUtils
@@ -35,6 +35,17 @@ Specifically, the part of the url that is left of `/edit?=...` in your current b
 👉 $(@bind baseurl TextField(default="https://teaching.frankhuettner.de"))
 """
 
+# ╔═╡ 6c5f22fa-c88b-468b-932a-cca755277fc5
+if baseurl == "https://teaching.frankhuettner.de"
+	md"""
+	!!! warning "Are you sure this is your base url?"
+	"""
+elseif baseurl[end]  == '/'
+	md"""
+	!!! warning "No slash at the end, please"
+	"""
+end
+
 # ╔═╡ 68ef64a2-1bce-4eed-bd79-bcd12d2c6bf8
 md"""#### Enter a data folder name
 
@@ -53,6 +64,37 @@ if session_name_fixed
 	!!! danger "Do not change folder name anymore"
 	"""
 end
+
+# ╔═╡ 91035449-f46c-4b6d-8495-e908d3275b90
+begin
+	course_path = homedir() * "/data/newsvendor_simulation/" * course_name
+	simlog_path = course_path * "/simlog"
+	nb_path = course_path * "/notebooks"
+	
+	if session_name_fixed == true	
+			mkpath(simlog_path)
+			mkpath(nb_path)
+	end	
+
+end;
+
+# ╔═╡ ad7c82fb-15fa-4f67-91b1-5321d67f5f41
+begin 
+	
+	if session_name_fixed == true	
+	
+	# sim_source_url = "https://raw.githubusercontent.com/frankhuettner/newsvendor/main/game/newsvendorgame.jl"
+	# sim_file = download(sim_source_url, nb_path * "/sim_source.jl")
+
+		
+	# link_file = download("https://raw.githubusercontent.com/frankhuettner/newsvendor/main/.ownserver/linklist.jl", course_path * "/linklist.jl")
+
+	sim_file = cp("../game/newsvendorgame.jl", nb_path * "/sim_source.jl")
+	link_file = cp("linklist.jl", course_path * "/linklist.jl")
+		
+	end
+
+end;
 
 # ╔═╡ 482fe8aa-2e60-4a8f-8261-9cc6f5065725
 md"# Manage participant names"
@@ -93,239 +135,22 @@ Please choose your preferred option 👉 $(@bind rand_or_csv Select(["rnd_names"
 md""" #### 2.2. Which column contains the names?
 """
 
+# ╔═╡ fe15f413-03e0-4ea5-b95d-61feca21d60c
+if isfile(course_path * "/df_clean.jld2")
+md"""Continue with this new name list? (*Note: this will overwrite the existing name list in the $(course_name) folder*)
+"""
+	
+else
+md"""Continue with this new list?
+"""
+	
+end
+
 # ╔═╡ 9f98c0d7-1812-4eef-99f6-815def7a3301
 begin
 	make_new_df_names_gegen = [0]
 	@bind make_new_df_names CounterButton("Yes, use new names")
 end
-
-# ╔═╡ ccf3ce31-3948-4dd9-babf-8fc21b2662cd
-md"# 🕹️ Manage simulation"
-
-# ╔═╡ d4bd1bf9-5e22-4d29-b51b-71f20de37e01
-@bind search_old_sims CounterButton("Search running or previous simulations in this class folder")
-
-# ╔═╡ 7b4bf101-f0b4-4a41-8119-5bbcfaedd489
-md""" ## Choose: $(@bind old_sims Select(["yes" => "🛰️ Reconnect simulations", "no" => "🚀 Make new simulations"]))
-"""
-
-# ╔═╡ 20390357-53c3-4ac9-9da7-0e541940be02
-md"""# 🔗 Share links to simulation
-$(@bind reload_links CounterButton("Reload links"))
-
-Share the link below with your students. It contains the list of links to the simulations:
-"""
-
-# ╔═╡ b4e41432-8ab9-4c85-b721-d0959505d51d
-md"# 📊 Load student's sim data"
-
-# ╔═╡ 475f9182-8b8e-414d-aa3c-b0ebb916265c
-@bind reload_stud_data CounterButton("Reload data from students")
-
-# ╔═╡ 42296e16-a1fa-4fbf-aaf2-575cb18f5b2a
-md"""# Appendix
-
-## Packages
-"""
-
-# ╔═╡ 8479288e-7c24-4e4a-afda-41e030bcab1e
-md"## Fantasy names"
-
-# ╔═╡ 31d9ff4f-c5eb-4d07-929c-46c86464f04e
-begin
-	fantasy_names =["Astra","Aura","Auris","Blissia","Blossom","Celestia","Cosmic","Crystal","Dark Rain","Diamond","Electra","Gold Horn","Golden Moon","Jewel","Luna","Majesty","Midnight","Milky Way","Mystique","Night Moon","Nightshade","Nightwind","Onnyx","Pearl Moon","Rainbow","Sapphire","Silver Star","Snowflake","Solstice","Star Light","Starburst","Stardust","Sterling","Sunshine","Twilight","Twinkle","Usha","Wilda","Wynstar","Zinnia"]
-	fantasy_names = vec([n1*" "*n2 for n1 in fantasy_names, n2 in fantasy_names])
-end
-
-# ╔═╡ 1b275f91-7f88-4cc7-bc2a-1a1bc8424782
-
-
-# ╔═╡ e69851f1-ac85-41f4-b14a-3dcecca3df5a
-md"## Data structs"
-
-# ╔═╡ 9d997283-f418-4027-93cf-0086fda84498
-struct TwoColumn{L, R}
-    left::L
-    right::R
-end; md"TwoColumn"
-
-# ╔═╡ b359302b-50b1-4b51-b4c4-23a772dd5949
-struct Foldable{C}
-    title::String
-    content::C
-end; md"Foldable"
-
-# ╔═╡ f607bbcd-978f-44bf-ac16-92436bdd2599
-md"## Functions"
-
-# ╔═╡ d0869f0d-ad56-4933-9382-1ec377efa972
-function L(f, x, u)
-	L, _ = quadgk(y -> (y - x) * f(y), x, u, rtol=1e-8)
-	return L
-end; md" L(x) = ∫ₓᵘ (y - x)f(y)dy"
-
-# ╔═╡ 859cceef-c4cb-4287-a8f9-52309c90f98d
-function my_round(x::Real; sigdigits::Int=3)
-	x = round(x, sigdigits=sigdigits)
-	if x >= 10^(sigdigits-1)
-		Int(x)
-	else
-		x
-	end
-end
-
-# ╔═╡ b9e86627-861f-496e-870a-f894f400465b
-function Base.show(io, mime::MIME"text/html", tc::TwoColumn)
-    write(io, """<div style="display: flex;"><div style="flex: 50%;">""")
-    show(io, mime, tc.left)
-    write(io, """</div><div style="flex: 50%;">""")
-    show(io, mime, tc.right)
-    write(io, """</div></div>""")
-end; md"""Displaying TwoColumns, e.g. `TwoColumn(md"Note the kink at x=0!", plot(-5:5, abs))` """
-
-# ╔═╡ dd013efb-b807-4156-9db7-10c6a086b01e
-function data_table(table)
-	d = Dict(
-        "headers" => [Dict("text" => string(name), "value" => string(name)) for name in Tables.columnnames(table)],
-        "data" => [Dict(string(name) => row[name] for name in Tables.columnnames(table)) for row in Tables.rows(table)]
-    )
-	djson = JSON3.write(d)
-	
-	return HTML("""
-		<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
-
-
-	  <div id="app">
-		<v-app>
-		  <v-data-table
-		  :headers="headers"
-		  :items="data"
-		></v-data-table>
-		</v-app>
-	  </div>
-
-	  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
-	  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
-	
-	<script>
-		new Vue({
-		  el: '#app',
-		  vuetify: new Vuetify(),
-		  data () {
-				return $djson
-			}
-		})
-	</script>
-	<style>
-		.v-application--wrap {
-			min-height: 10vh;
-		}
-		.v-data-footer__select {
-			display: none;
-		}
-	</style>
-	""")
-end
-
-# ╔═╡ 9684edcc-c28f-4704-bc45-fd9680122353
-md"## System Data"
-
-# ╔═╡ 354a12c8-7557-4365-b09c-4f6a167f54eb
-read("/proc/meminfo", String)
-
-# ╔═╡ 795fffb5-093e-49ac-9186-8a23e2287ea2
-with_terminal() do
-	run(`egrep --color 'Mem|Cache|Swap' /proc/meminfo`)
-end
-
-# ╔═╡ 6c07755b-4aaf-44ee-95b5-3f974d03c1da
-length(Sys.cpu_info())
-
-# ╔═╡ 84279cdc-12fb-4af8-b31c-ad2ddbdb4514
-Threads.nthreads()
-
-# ╔═╡ 277be6ad-0b96-48fd-ab9f-179041725b65
-md"## Configurations"
-
-# ╔═╡ 4bd8bb71-122e-4232-a043-28831249311a
-md"### Options"
-
-# ╔═╡ 66fa1042-496b-4bc8-b48f-d4535730a2d7
-@option struct PlayLog
-	demands::Vector{<:Number} = round.(Int, rand(TruncatedNormal(90, 30, 0, 180), 30))
-	qs::Vector{<:Number} = Vector{Int64}()
-end
-
-# ╔═╡ 9da71e91-12a1-4c61-bb49-92fafe74cedc
-@option struct StoryLog
-	title::String = "Patisserie Cheers!"
-	url::String = "https://raw.githubusercontent.com/frankhuettner/newsvendor/main/scenarios/cheers_1_story.md"
-end
-
-# ╔═╡ a04d62f1-0e5c-40d3-bf0d-b251f3983313
-@option struct UnitValueLog
-	c::Real = 1 	# cost of creating one unit
-	p::Real = 5  	# selling price
-	s::Real = 0    # salvage value
-end
-
-# ╔═╡ e3dac4fc-1c3f-42e7-9bfe-f6741a38a789
-@option struct DistributionLog
-	typus = "Truncated Normal"
-	l::Real = 0 	# lower bound
-	u::Real = 180		# upper bound
-	μ::Real = (u - l)/2	 # mean demand
-	σ::Real = (u - l)/6 	# standard deviation of demand
-	discrete_probs = [pdf(TruncatedNormal(90, 30, 0, 180), x) / 
-				sum(pdf(TruncatedNormal(90, 30, 0, 180), 1:180))  for x in 1:180]
-end
-
-# ╔═╡ 328895a7-7d6e-471b-a3c1-37e2c056c5c0
-@option struct SimConfLog
-	max_num_days::Int = 30  # Maximal number of rounds to play
-	delay::Int = 300    # ms it takes for demand to show after stocking decision 
-	allow_reset::Bool = false
-end
-
-# ╔═╡ e278947e-3f7d-404a-bf99-1d0720de1a99
-@option struct ScenarioLog
-	name::String="cheers_1"
-	unit_value::UnitValueLog = UnitValueLog()
-	distribution::DistributionLog = DistributionLog()
-	story::StoryLog = StoryLog()	
-	sim_conf::SimConfLog = SimConfLog()
-end
-
-# ╔═╡ 4434e3c2-1526-4453-beb6-bd21acfb4748
-@option struct SimLog
-	player_id::String = "Frank Huettner"
-	play::PlayLog = PlayLog()
-	scenario::ScenarioLog = ScenarioLog()
-end
-
-# ╔═╡ 6c5f22fa-c88b-468b-932a-cca755277fc5
-if baseurl == "https://teaching.frankhuettner.de"
-	md"""
-	!!! warning "Are you sure this is your base url?"
-	"""
-elseif baseurl[end]  == '/'
-	md"""
-	!!! warning "No slash at the end, please"
-	"""
-end
-
-# ╔═╡ 91035449-f46c-4b6d-8495-e908d3275b90
-begin
-	course_path = homedir() * "/data/newsvendor_simulation/" * course_name
-	simlog_path = course_path * "/simlog"
-	nb_path = course_path * "/notebooks"
-	
-	if session_name_fixed == true	
-			mkpath(simlog_path)
-			mkpath(nb_path)
-	end	
-
-end;
 
 # ╔═╡ 351df65f-5f2d-464d-97d0-ec085465bb91
 if session_name_fixed
@@ -339,16 +164,11 @@ if session_name_fixed
 	end
 end
 
-# ╔═╡ fe15f413-03e0-4ea5-b95d-61feca21d60c
-if isfile(course_path * "/df_clean.jld2")
-md"""Continue with this new name list? (*Note: this will overwrite the existing name list in the $(course_name) folder*)
-"""
-	
-else
-md"""Continue with this new list?
-"""
-	
-end
+# ╔═╡ ccf3ce31-3948-4dd9-babf-8fc21b2662cd
+md"# 🕹️ Manage simulation"
+
+# ╔═╡ d4bd1bf9-5e22-4d29-b51b-71f20de37e01
+@bind search_old_sims CounterButton("Search running or previous simulations in this class folder")
 
 # ╔═╡ f72e5ab3-f7a4-4b33-90cc-8869ce26b14f
 search_old_sims; if session_name_fixed
@@ -362,29 +182,44 @@ search_old_sims; if session_name_fixed
 	end
 end
 
-# ╔═╡ 9d29630a-1188-40b3-a32e-1716add04e8e
-function mem_available() 
-	run(pipeline(`grep MemAvailable /proc/meminfo`, simlog_path*"/MemAvailable.txt"))
-	parse(Int,(strip(chop(readdlm(simlog_path*"/MemAvailable.txt", ':')[1,2],tail=2))))
+# ╔═╡ bc03ad04-d327-45ab-8fde-fa3a17bf2c3a
+begin	
+	if isfile(course_path * "/df_links.jld2") 
+		df_links = load(course_path * "/df_links.jld2", "new_df_links")
+		df_links[!,filter(x->x!="link",names(df_links))]
+	end
 end
 
-# ╔═╡ ad7c82fb-15fa-4f67-91b1-5321d67f5f41
-begin 
+# ╔═╡ 7b4bf101-f0b4-4a41-8119-5bbcfaedd489
+md""" ## Choose: $(@bind old_sims Select(["yes" => "🛰️ Reconnect simulations", "no" => "🚀 Make new simulations"]))
+"""
+
+# ╔═╡ 0d17cdfd-6948-4be2-b1b7-1030e9f6b242
+if old_sims == "no"
+
+md"""You are about to start **NEW** simulations for the following players:"""
 	
-	if session_name_fixed == true	
+end
+
+# ╔═╡ 5f491b0d-05a3-47cf-8762-65e13a336ee9
+if old_sims == "yes" && isfile(course_path * "/df_links.jld2")
+
+md"""Restart previous simulations 👉  $(@bind start_sims CheckBox(default=false))"""
+
+elseif old_sims == "no"
 	
-	# sim_source_url = "https://raw.githubusercontent.com/frankhuettner/newsvendor/main/game/newsvendorgame.jl"
-	# sim_file = download(sim_source_url, nb_path * "/sim_source.jl")
+md"""
+Start new simulations (*Note: this will overwrite existing data with the same **data folder** name*): 👉  $(@bind start_sims CheckBox(default=false))
+"""
+	
+end
 
-		
-	# link_file = download("https://raw.githubusercontent.com/frankhuettner/newsvendor/main/.ownserver/linklist.jl", course_path * "/linklist.jl")
+# ╔═╡ 20390357-53c3-4ac9-9da7-0e541940be02
+md"""# 🔗 Share links to simulation
+$(@bind reload_links CounterButton("Reload links"))
 
-	sim_file = cp("../game/newsvendorgame.jl", nb_path * "/sim_source.jl")
-	link_file = cp("linklist.jl", course_path * "/linklist.jl")
-		
-	end
-
-end;
+Share the link below with your students. It contains the list of links to the simulations:
+"""
 
 # ╔═╡ 5652fe16-1eb8-4834-81ff-0bd6eca15c06
 reload_links; if isfile(course_path * "/df_links.jld2") && @isdefined link_file
@@ -407,6 +242,27 @@ reload_links; if isfile(course_path * "/df_links.jld2") && @isdefined link_file
 	)" target="_blank">$(baseurl * r_linklist.request.target
 	)</a>
 	""")
+end
+
+# ╔═╡ b4e41432-8ab9-4c85-b721-d0959505d51d
+md"# 📊 Load student's sim data"
+
+# ╔═╡ 475f9182-8b8e-414d-aa3c-b0ebb916265c
+@bind reload_stud_data CounterButton("Reload data from students")
+
+# ╔═╡ 42296e16-a1fa-4fbf-aaf2-575cb18f5b2a
+md"""# Appendix
+
+## Packages
+"""
+
+# ╔═╡ 8479288e-7c24-4e4a-afda-41e030bcab1e
+md"## Fantasy names"
+
+# ╔═╡ 31d9ff4f-c5eb-4d07-929c-46c86464f04e
+begin
+	fantasy_names =["Astra","Aura","Auris","Blissia","Blossom","Celestia","Cosmic","Crystal","Dark Rain","Diamond","Electra","Gold Horn","Golden Moon","Jewel","Luna","Majesty","Midnight","Milky Way","Mystique","Night Moon","Nightshade","Nightwind","Onnyx","Pearl Moon","Rainbow","Sapphire","Silver Star","Snowflake","Solstice","Star Light","Starburst","Stardust","Sterling","Sunshine","Twilight","Twinkle","Usha","Wilda","Wynstar","Zinnia"]
+	fantasy_names = vec([n1*" "*n2 for n1 in fantasy_names, n2 in fantasy_names])
 end
 
 # ╔═╡ 1bf9f96f-4288-421e-936d-2bbdfbd7a4f8
@@ -455,63 +311,6 @@ begin
 	if isfile(course_path * "/df_clean.jld2")
 		df_clean = load(course_path * "/df_clean.jld2", "new_df_clean")
 	end
-end
-
-# ╔═╡ bc03ad04-d327-45ab-8fde-fa3a17bf2c3a
-begin	
-	if isfile(course_path * "/df_links.jld2") 
-		df_links = load(course_path * "/df_links.jld2", "new_df_links")
-		df_links[!,filter(x->x!="link",names(df_links))]
-	end
-end
-
-# ╔═╡ 0d17cdfd-6948-4be2-b1b7-1030e9f6b242
-if old_sims == "no"
-
-md"""You are about to start **NEW** simulations for the following players:"""
-	
-end
-
-# ╔═╡ f379eb78-8c81-4b4e-bd22-a10d42c81cbc
-if old_sims == "no"
-
-	new_df_clean
-end
-
-# ╔═╡ 5f491b0d-05a3-47cf-8762-65e13a336ee9
-if old_sims == "yes" && isfile(course_path * "/df_links.jld2")
-
-md"""Restart previous simulations 👉  $(@bind start_sims CheckBox(default=false))"""
-
-elseif old_sims == "no"
-	
-md"""
-Start new simulations (*Note: this will overwrite existing data with the same **data folder** name*): 👉  $(@bind start_sims CheckBox(default=false))
-"""
-	
-end
-
-# ╔═╡ ae87a8dc-9dcc-48f4-a812-aea527381d78
-if !isfile(course_path * "/df_links.jld2") && old_sims=="yes"
-	md"""
-	!!! warning "Wait, there are no simulations in this course folder!"
-	"""
-elseif !start_sims && @isdefined df_clean
-	if Int(floor(mem_available() / 2^10 / 550)) >= nrow(df_clean)
-		md"""
-		You have enough memory for **$(Int(floor(mem_available() / 2^10 / 550)))** independent simulations; you are about to lauch **$(nrow(df_clean))** simulations.
-		!!! tip "Let do it!"
-		"""
-	else
-		md"""
-		You have enough memory for $(Int(floor(mem_available() / 2^10 / 550))) parallel simulations; you are about to lauch $(nrow(df_clean)) simulations.
-		!!! danger "Not enough memory, 🤔 server might freeze!"
-		"""
-	end
-elseif start_sims
-	md"""
-	!!! danger "Simulation started. Do not change parameters above"
-	"""
 end
 
 # ╔═╡ 88c50897-2236-4637-ae16-987b34184155
@@ -563,6 +362,30 @@ end
 if @isdefined new_df_links
 	new_df_links
 end
+
+# ╔═╡ f379eb78-8c81-4b4e-bd22-a10d42c81cbc
+if old_sims == "no"
+
+	new_df_clean
+end
+
+# ╔═╡ 1b275f91-7f88-4cc7-bc2a-1a1bc8424782
+
+
+# ╔═╡ e69851f1-ac85-41f4-b14a-3dcecca3df5a
+md"## Data structs"
+
+# ╔═╡ 9d997283-f418-4027-93cf-0086fda84498
+struct TwoColumn{L, R}
+    left::L
+    right::R
+end; md"TwoColumn"
+
+# ╔═╡ b359302b-50b1-4b51-b4c4-23a772dd5949
+struct Foldable{C}
+    title::String
+    content::C
+end; md"Foldable"
 
 # ╔═╡ 59a318dc-34e5-4f04-ae8b-dfa06ccc87b4
 @with_kw struct Scenario
@@ -633,6 +456,29 @@ Base.@kwdef mutable struct SimData
 	expected_profits::Float64 = 0.0
 end; 
 
+# ╔═╡ f607bbcd-978f-44bf-ac16-92436bdd2599
+md"## Functions"
+
+# ╔═╡ 879a6143-adf3-4a84-b077-11590f3f878d
+function compute_expected_values(qs::Vector{<:Number}, scenario::Scenario) 
+	n_days = length(qs)
+	if n_days == 0 return zeros(1,4) end
+
+	expected_values = Matrix{Number}(undef, n_days, 4)
+
+	for i in 1:n_days
+		expected_values[i,:] = compute_expected_values(qs[i], scenario) 
+	end
+
+	return mean(expected_values, dims=1)
+end
+
+# ╔═╡ d0869f0d-ad56-4933-9382-1ec377efa972
+function L(f, x, u)
+	L, _ = quadgk(y -> (y - x) * f(y), x, u, rtol=1e-8)
+	return L
+end; md" L(x) = ∫ₓᵘ (y - x)f(y)dy"
+
 # ╔═╡ 252cc44e-303f-47cd-a0c8-8d2510d055c6
 function compute_expected_values(q::Number, scenario::Scenario) 
 	sc = scenario
@@ -649,18 +495,131 @@ function compute_expected_values(q::Number, scenario::Scenario)
 			expected_profit]
 end
 
-# ╔═╡ 879a6143-adf3-4a84-b077-11590f3f878d
-function compute_expected_values(qs::Vector{<:Number}, scenario::Scenario) 
-	n_days = length(qs)
-	if n_days == 0 return zeros(1,4) end
-
-	expected_values = Matrix{Number}(undef, n_days, 4)
-
-	for i in 1:n_days
-		expected_values[i,:] = compute_expected_values(qs[i], scenario) 
+# ╔═╡ 7e102ea4-96b9-41c4-9a10-1cca93a92d07
+function update_sim_data!(sd::SimData)
+	sd.days_played = length(sd.qs)
+	
+	sd.sales = min.(sd.qs, sd.demands[1:sd.days_played])
+	sd.lost_sales = sd.demands[1:sd.days_played] - sd.sales
+	sd.left_overs = sd.qs - sd.sales
+	sd.revenues = sd.scenario.p .* sd.sales + sd.scenario.s .* sd.left_overs
+	sd.costs = sd.scenario.c .* sd.qs
+	sd.profits = sd.revenues - sd.costs
+	
+	sd.total_demand = sum(sd.demands[1:sd.days_played])
+	sd.total_q = sum(sd.qs)
+	sd.total_sale = sum(sd.sales)
+	sd.total_lost_sale = sum(sd.lost_sales)
+	sd.total_left_over = sum(sd.left_overs)
+	sd.total_revenue = sum(sd.revenues)
+	sd.total_cost = sum(sd.costs)
+	sd.total_profit = sum(sd.profits)
+	
+	if sd.days_played > 0
+		sd.avg_demand = sd.total_demand / sd.days_played
+		sd.avg_q = sd.total_q / sd.days_played
+		sd.avg_sale = sd.total_sale / sd.days_played
+		sd.avg_lost_sale = sd.total_lost_sale / sd.days_played
+		sd.avg_left_over = sd.total_left_over / sd.days_played
+		sd.avg_revenue = sd.total_revenue / sd.days_played
+		sd.avg_cost = sd.total_cost / sd.days_played
+		sd.avg_profit = sd.total_profit / sd.days_played
 	end
+	
+	sd.expected_lost_sales, sd.expected_sales, sd.expected_left_overs, sd.expected_profits = 	compute_expected_values(sd.qs, sd.scenario)
+	
+end
 
-	return mean(expected_values, dims=1)
+# ╔═╡ 859cceef-c4cb-4287-a8f9-52309c90f98d
+function my_round(x::Real; sigdigits::Int=3)
+	x = round(x, sigdigits=sigdigits)
+	if x >= 10^(sigdigits-1)
+		Int(x)
+	else
+		x
+	end
+end
+
+# ╔═╡ b9e86627-861f-496e-870a-f894f400465b
+function Base.show(io, mime::MIME"text/html", tc::TwoColumn)
+    write(io, """<div style="display: flex;"><div style="flex: 50%;">""")
+    show(io, mime, tc.left)
+    write(io, """</div><div style="flex: 50%;">""")
+    show(io, mime, tc.right)
+    write(io, """</div></div>""")
+end; md"""Displaying TwoColumns, e.g. `TwoColumn(md"Note the kink at x=0!", plot(-5:5, abs))` """
+
+# ╔═╡ 9d29630a-1188-40b3-a32e-1716add04e8e
+function mem_available() 
+	run(pipeline(`grep MemAvailable /proc/meminfo`, simlog_path*"/MemAvailable.txt"))
+	parse(Int,(strip(chop(readdlm(simlog_path*"/MemAvailable.txt", ':')[1,2],tail=2))))
+end
+
+# ╔═╡ ae87a8dc-9dcc-48f4-a812-aea527381d78
+if !isfile(course_path * "/df_links.jld2") && old_sims=="yes"
+	md"""
+	!!! warning "Wait, there are no simulations in this course folder!"
+	"""
+elseif !start_sims && @isdefined df_clean
+	if Int(floor(mem_available() / 2^10 / 550)) >= nrow(df_clean)
+		md"""
+		You have enough memory for **$(Int(floor(mem_available() / 2^10 / 550)))** independent simulations; you are about to lauch **$(nrow(df_clean))** simulations.
+		!!! tip "Let do it!"
+		"""
+	else
+		md"""
+		You have enough memory for $(Int(floor(mem_available() / 2^10 / 550))) parallel simulations; you are about to lauch $(nrow(df_clean)) simulations.
+		!!! danger "Not enough memory, 🤔 server might freeze!"
+		"""
+	end
+elseif start_sims
+	md"""
+	!!! danger "Simulation started. Do not change parameters above"
+	"""
+end
+
+# ╔═╡ dd013efb-b807-4156-9db7-10c6a086b01e
+function data_table(table)
+	d = Dict(
+        "headers" => [Dict("text" => string(name), "value" => string(name)) for name in Tables.columnnames(table)],
+        "data" => [Dict(string(name) => row[name] for name in Tables.columnnames(table)) for row in Tables.rows(table)]
+    )
+	djson = JSON3.write(d)
+	
+	return HTML("""
+		<link href="https://cdn.jsdelivr.net/npm/@mdi/font@5.x/css/materialdesignicons.min.css" rel="stylesheet">
+
+
+	  <div id="app">
+		<v-app>
+		  <v-data-table
+		  :headers="headers"
+		  :items="data"
+		></v-data-table>
+		</v-app>
+	  </div>
+
+	  <script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+	  <script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+	
+	<script>
+		new Vue({
+		  el: '#app',
+		  vuetify: new Vuetify(),
+		  data () {
+				return $djson
+			}
+		})
+	</script>
+	<style>
+		.v-application--wrap {
+			min-height: 10vh;
+		}
+		.v-data-footer__select {
+			display: none;
+		}
+	</style>
+	""")
 end
 
 # ╔═╡ 30a74ff2-a837-4712-90e4-3b6a80017e0d
@@ -729,39 +688,80 @@ if @isdefined df_res
 	end
 end
 
-# ╔═╡ 7e102ea4-96b9-41c4-9a10-1cca93a92d07
-function update_sim_data!(sd::SimData)
-	sd.days_played = length(sd.qs)
-	
-	sd.sales = min.(sd.qs, sd.demands[1:sd.days_played])
-	sd.lost_sales = sd.demands[1:sd.days_played] - sd.sales
-	sd.left_overs = sd.qs - sd.sales
-	sd.revenues = sd.scenario.p .* sd.sales + sd.scenario.s .* sd.left_overs
-	sd.costs = sd.scenario.c .* sd.qs
-	sd.profits = sd.revenues - sd.costs
-	
-	sd.total_demand = sum(sd.demands[1:sd.days_played])
-	sd.total_q = sum(sd.qs)
-	sd.total_sale = sum(sd.sales)
-	sd.total_lost_sale = sum(sd.lost_sales)
-	sd.total_left_over = sum(sd.left_overs)
-	sd.total_revenue = sum(sd.revenues)
-	sd.total_cost = sum(sd.costs)
-	sd.total_profit = sum(sd.profits)
-	
-	if sd.days_played > 0
-		sd.avg_demand = sd.total_demand / sd.days_played
-		sd.avg_q = sd.total_q / sd.days_played
-		sd.avg_sale = sd.total_sale / sd.days_played
-		sd.avg_lost_sale = sd.total_lost_sale / sd.days_played
-		sd.avg_left_over = sd.total_left_over / sd.days_played
-		sd.avg_revenue = sd.total_revenue / sd.days_played
-		sd.avg_cost = sd.total_cost / sd.days_played
-		sd.avg_profit = sd.total_profit / sd.days_played
-	end
-	
-	sd.expected_lost_sales, sd.expected_sales, sd.expected_left_overs, sd.expected_profits = 	compute_expected_values(sd.qs, sd.scenario)
-	
+# ╔═╡ 9684edcc-c28f-4704-bc45-fd9680122353
+md"## System Data"
+
+# ╔═╡ 354a12c8-7557-4365-b09c-4f6a167f54eb
+read("/proc/meminfo", String)
+
+# ╔═╡ 795fffb5-093e-49ac-9186-8a23e2287ea2
+with_terminal() do
+	run(`egrep --color 'Mem|Cache|Swap' /proc/meminfo`)
+end
+
+# ╔═╡ 6c07755b-4aaf-44ee-95b5-3f974d03c1da
+length(Sys.cpu_info())
+
+# ╔═╡ 84279cdc-12fb-4af8-b31c-ad2ddbdb4514
+Threads.nthreads()
+
+# ╔═╡ 277be6ad-0b96-48fd-ab9f-179041725b65
+md"## Configurations"
+
+# ╔═╡ 4bd8bb71-122e-4232-a043-28831249311a
+md"### Options"
+
+# ╔═╡ 4434e3c2-1526-4453-beb6-bd21acfb4748
+@option struct SimLog
+	player_id::String = "Frank Huettner"
+	play::PlayLog = PlayLog()
+	scenario::ScenarioLog = ScenarioLog()
+end
+
+# ╔═╡ 66fa1042-496b-4bc8-b48f-d4535730a2d7
+@option struct PlayLog
+	demands::Vector{<:Number} = round.(Int, rand(TruncatedNormal(90, 30, 0, 180), 30))
+	qs::Vector{<:Number} = Vector{Int64}()
+end
+
+# ╔═╡ e278947e-3f7d-404a-bf99-1d0720de1a99
+@option struct ScenarioLog
+	name::String="cheers_1"
+	unit_value::UnitValueLog = UnitValueLog()
+	distribution::DistributionLog = DistributionLog()
+	story::StoryLog = StoryLog()	
+	sim_conf::SimConfLog = SimConfLog()
+end
+
+# ╔═╡ 9da71e91-12a1-4c61-bb49-92fafe74cedc
+@option struct StoryLog
+	title::String = "Patisserie Cheers!"
+	url::String = "https://raw.githubusercontent.com/frankhuettner/newsvendor/main/scenarios/cheers_1_story.md"
+end
+
+# ╔═╡ a04d62f1-0e5c-40d3-bf0d-b251f3983313
+@option struct UnitValueLog
+	c::Real = 1 	# cost of creating one unit
+	p::Real = 5  	# selling price
+	s::Real = 0    # salvage value
+end
+
+# ╔═╡ e3dac4fc-1c3f-42e7-9bfe-f6741a38a789
+@option struct DistributionLog
+	typus = "Truncated Normal"
+	l::Real = 0 	# lower bound
+	u::Real = 180		# upper bound
+	μ::Real = (u - l)/2	 # mean demand
+	σ::Real = (u - l)/6 	# standard deviation of demand
+	discrete_probs = [pdf(TruncatedNormal(90, 30, 0, 180), x) / 
+				sum(pdf(TruncatedNormal(90, 30, 0, 180), 1:180))  for x in 1:180]
+end
+
+# ╔═╡ 328895a7-7d6e-471b-a3c1-37e2c056c5c0
+@option struct SimConfLog
+	max_num_days::Int = 30  # Maximal number of rounds to play
+	delay::Int = 300    # ms it takes for demand to show after stocking decision 
+	allow_reset::Bool = false
 end
 
 # ╔═╡ 2e732623-1df4-4f52-8719-a094bfd82be1
