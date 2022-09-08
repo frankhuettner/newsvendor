@@ -3,17 +3,17 @@
 
 
 
+# Get your repository
+# git clone https://github.com/frankhuettner/newsvendor
+
 
 
 # Install and run Julia as root
-wget https://julialang-s3.julialang.org/bin/linux/x64/1.7/julia-1.7.2-linux-x86_64.tar.gz
-tar zxvf julia-1.7.2-linux-x86_64.tar.gz
-rm julia-1.7.2-linux-x86_64.tar.gz
-ln -s `pwd`/julia-1.7.2/bin/julia /usr/local/bin/julia
+wget https://julialang-s3.julialang.org/bin/linux/x64/1.8/julia-1.8.0-linux-x86_64.tar.gz
+tar zxvf julia-1.8.0-linux-x86_64.tar.gz
+rm julia-1.8.0-linux-x86_64.tar.gz
+ln -s `pwd`/julia-1.8.0/bin/julia /usr/local/bin/julia
 
-
-# Get your repository
-git clone https://github.com/frankhuettner/newsvendor
 
 
 # Run PlutoSliderServer
