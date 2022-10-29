@@ -40,3 +40,5 @@ debrief/debrief_newsvendor.jl.html
 debrief/newsvendor_solution_fathomd.jl
 
 debrief/newsvendor_tool.jl
+
+game/simlog_newsvendorgame.toml
