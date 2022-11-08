@@ -1,5 +1,5 @@
 ### A Pluto.jl notebook ###
-# v0.19.12
+# v0.19.14
 
 using Markdown
 using InteractiveUtils
@@ -127,7 +127,7 @@ function replace_player_id(file, rndid)
 	open(file) do io
 	    for line in eachline(io, keep=true) # keep so the new line isn't chomped
 	        if occursin("player_id", line)
-	            line = """player_id = $(rndid)\n"""
+	            line = """player_id = "$(rndid)"\n"""
 	        end
 	        write(tmpio, line)
 	    end
@@ -147,9 +147,10 @@ function create_data_for_export(source_folder, not_anonymized=true)
 		
 		files = readdir(simlogfolder, join=true)
 		for file in files
-			rndid = Random.randstring(4) * ".toml"
+			rndid = Random.randstring(4)
+			rndfn = rndid * ".toml"
 			replace_player_id(file, rndid)
-			cp(file, joinpath(tsimlog, rndid), force=true)
+			cp(file, joinpath(tsimlog, rndfn), force=true)
 		end
 		tdata = joinpath(tsimlog, "..")
 	else
@@ -1439,9 +1440,9 @@ version = "1.12.0"
 
 [[deps.DataFrames]]
 deps = ["Compat", "DataAPI", "Future", "InvertedIndices", "IteratorInterfaceExtensions", "LinearAlgebra", "Markdown", "Missings", "PooledArrays", "PrettyTables", "Printf", "REPL", "Random", "Reexport", "SnoopPrecompile", "SortingAlgorithms", "Statistics", "TableTraits", "Tables", "Unicode"]
-git-tree-sha1 = "5b93f1b47eec9b7194814e40542752418546679f"
+git-tree-sha1 = "558078b0b78278683a7445c626ee78c86b9bb000"
 uuid = "a93c6f00-e57d-5684-b7b6-d8193f3e46c0"
-version = "1.4.2"
+version = "1.4.1"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -2313,9 +2314,9 @@ version = "2.6.0"
 
 [[deps.Quaternions]]
 deps = ["LinearAlgebra", "Random"]
-git-tree-sha1 = "fcebf40de9a04c58da5073ec09c1c1e95944c79b"
+git-tree-sha1 = "fd78cbfa5f5be5f81a482908f8ccfad611dca9a9"
 uuid = "94ee1d12-ae83-5a48-8b1c-48b8ff168ae0"
-version = "0.6.1"
+version = "0.6.0"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
