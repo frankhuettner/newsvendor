@@ -25,7 +25,7 @@ using PlutoUI
 
 # ╔═╡ 933e018f-7229-4e29-b1ae-c07a19772213
 md"""
-# Derivation of the Formula SL = CF
+# Derivation of the Optimality Condition of the Newsvendor Model, SL = CF
 
 In this document, we tackle the question: 
 
