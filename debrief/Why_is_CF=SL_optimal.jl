@@ -335,8 +335,7 @@ begin
 end
 
 # ╔═╡ f4036bac-aae8-49bd-905b-548610e4ae75
-hint(md""" **SL will be different**, e.g., if we decide about going 149🍰 ➡ 150🍰, then the 150th cake will be left over with probability 95%, and sold with a chance of  5%. 
-	At this point it could be profitable to reduce the stock quantity.
+hint(md""" **SL will be different**, e.g., if we decide about going 149🍰 ➡ 150🍰, then the 150th cake will be left over with probability 95%, and sold with a chance of  5%. (This suggests that adding the 150th cakes is not profitable; instead, we should consider reducting the quantity below 149).
 	
 	""", """What changes if we ask this question for different stock quantities?""")
 
@@ -565,7 +564,7 @@ md"""
 
 
 
-➡ Additional cake will be left over (if we do NOT run out of stock) *or* sells (if we run out of stock)
+➡ Additional cake will be left over (if we do NOT run out of stock) *or* sells (if we run out of stock); this gives the following calculation:
 
 | What could happen                   | Probability           | Implication        | Expected Impact of 1 More 🍰        |
 |----------------------------|-----------------------|--------------------|----------------------|
@@ -589,7 +588,8 @@ let
 	# More General: Should We Add More 🍰?
 	
 	
-	If we originally planned to make **Q** 🍰, and now consider to go up to **Q+1** 🍰.  
+	If we originally planned to make **Q** 🍰, and now consider to go up to **Q+1** 🍰, we get the following calculation:
+
 	
 	| What could happen                   | Probability           | Implication        | Expected Impact of 1 More 🍰     |
 	|---------------------|-----------------------------|--------------------|---------------------------------------|
