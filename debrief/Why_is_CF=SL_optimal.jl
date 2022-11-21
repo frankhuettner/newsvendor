@@ -16,7 +16,7 @@ end
 
 # ╔═╡ e0d09197-fc18-46e9-b0f9-b513ea32596a
 begin
-	using  Images,  ShortCodes,     PlutoTeachingTools, Distributions, NewsvendorModel
+	using  Images,  ShortCodes, PlutoTeachingTools, Distributions, NewsvendorModel
 	md""
 end
 
@@ -29,11 +29,11 @@ md"""
 
 In this document, we tackle the question: 
 
-**Why is it optimal to set SL = CF?**
+!!! danger "Why is it optimal to set SL = CF?"
 
-To this end, we will start with a low quantity and wonder why we should increase the quantity. We will see that the argument in favor of increasing the quantity will stop once we reached the optimal quantity. 
+> To answer this, we will start with a low quantity, a quantity that is clearly too low, and wonder why we should increase the quantity. We will see that the argument in favor of increasing the quantity will stop once we reached the optimal quantity. 
 
-The arguement is illustrated for the case of _Cheers!_ (Scenario I):
+> The argument is illustrated for the case of [_Cheers!_ (Scenario I)](https://github.com/frankhuettner/newsvendor/blob/main/scenarios/cheers_1_story.md#patisserie-cheers):
 
 
 """
@@ -43,9 +43,7 @@ The arguement is illustrated for the case of _Cheers!_ (Scenario I):
 
 # ╔═╡ b96b3b5b-d88b-402f-8471-86446a42235a
 md"""
-
-
-Let's restate the optimality condition.
+> Now, let's first recap the optimality condition before we dive into the derivation of SL = CF.
 """
 
 # ╔═╡ fd5ac52c-e5e8-4603-a835-6abd8e4331a1
@@ -71,8 +69,10 @@ md"""
 
 """
 
-# ╔═╡ 49dbe76a-af43-4026-82ef-cf934954efe9
-
+# ╔═╡ ccf882c4-bb2f-4c05-b1c3-8e870e0f9ece
+md"""
+> It's not possible to make 115.2 cakes. What to do?
+"""
 
 # ╔═╡ cfd852f3-1e53-476f-b646-743dde2c6481
 md"""
@@ -80,8 +80,9 @@ md"""
 **Slight deviation from the optimal quantity is still very good**
 """
 
-# ╔═╡ 59a24e9b-24f6-4b5b-b41d-88da790b1b02
-let
+# ╔═╡ cb1ac8fb-69f1-4a6f-b799-4a78b38dc7b9
+begin
+	# using Plots
 	# qopt = NewsvendorModel.q_opt(nvm) 
 	# xs = range(qopt-std(nvm.demand), qopt+std(nvm.demand), 100)
 	# plt = plot(xs, [NewsvendorModel.profit(nvm, x) for x in xs], lw=4,
@@ -91,28 +92,54 @@ let
 	# 	size=(520,250),
 	# 	title="Robust Optimum: Similar Profits Q=110...120"
 	# )
-	# savefig(plt,"img/q-vs-exp_profit.png")
-    Resource("https://github.com/frankhuettner/newsvendor/raw/main/debrief/img/q-vs-exp_profit.png")
+	# savefig(plt,"img/q-vs-exp_profit.svg")
+	    Resource("https://github.com/frankhuettner/newsvendor/raw/main/debrief/img/q-vs-exp_profit.svg")
 end
+
+# ╔═╡ b3463fdc-c62d-495d-8e45-75fbc277cbf0
+md"""
+> Thus, rounding up or down barely matters; but here are some further thoughts on the matter.
+"""
 
 # ╔═╡ 94f0412b-6c34-4b64-8365-9d11dfebd055
 md"""
-Thus, rounding up or down barely matters; but here are some further thoughts on the matter: 
-1. If you have a continuous distribution, rounding to the next integer is mostly best from a purely mathematical point of view
+1. Rounding to the next integer is mostly best from a purely mathematical point of view
 2. Pragmatically, *rounding up* seems better because what really matters is: 
-   - The **input data** is tends to be wrong: Cᵤ and σ are usually underestimated
+   - The *input data* is tends to be wrong: Cᵤ and σ are usually underestimated
    - There is a tendency to pull to the center
    ➡ Better have some more safety stock
 3. Align your action: If your boss is more likely disturbed by massive leftovers and cares little about nontangible forgone profit, then round down; if your company suffers from complaints about stock-outs, then go up with the quantity
+
+Remark: For discrete probability distributions (as e.g. in [Scenario IV of *Cheers!*](https://github.com/frankhuettner/newsvendor/blob/main/scenarios/cheers_4_story.md#patisserie-cheers--part-iv)), we do not round; instead, we keep increasing as long as SL < CF and stop once we have SL ≥ CF.
 """
 
 # ╔═╡ d7768d12-a3ad-48d7-acb9-2bdd46cc8586
 
 
-# ╔═╡ 85b982ae-6cc2-4b9f-bc38-28c1d91f0c8a
-md"Now, let's understand where the optimality condition is coming from. Intuitively, it is not sufficient to just stock the expected quantity, i.e., to stock 90 cakes. Missing a customer lost €4, wheras a leftover cake comes at a loss of €1. Thus, we rather want to err on the side of having too much and add some safety stock."
+# ╔═╡ 623ca4f6-ce93-4a81-a0ea-9dd3e6327b5c
 
-# ╔═╡ f7433a6b-35bc-4d2a-ae3e-a109fcef8960
+
+# ╔═╡ 85b982ae-6cc2-4b9f-bc38-28c1d91f0c8a
+md"
+> Now, let's understand where the optimality condition is coming from. 
+
+> Intuitively, it is not sufficient to just stock the expected quantity, i.e., to just stock 90 cakes. Missing a customer lost €4, wheras a leftover cake comes at a loss of €1. Thus, we rather want to err on the side of having too much and add some safety stock.
+
+> More precisely, we can argue that 91 is better than 90 as follows.
+"
+
+# ╔═╡ 0d3a316c-5b83-45e2-bae2-9b9e128cb527
+
+
+# ╔═╡ 93a0fa2d-63de-4e47-a233-0011410b47a3
+
+
+# ╔═╡ ffc81ab2-f7e5-4a3f-9646-16e107036849
+md"
+> In view of this above argument, we shall now move on: Should we increase from 91 to 92? How about from 92 to 93? And so on... 
+"
+
+# ╔═╡ df43f01f-2906-4f5a-b9ec-10025ce605dc
 
 
 # ╔═╡ 0de1569c-dae5-4a49-b37d-6acaf89c268f
@@ -120,11 +147,25 @@ md"Now, let's understand where the optimality condition is coming from. Intuitiv
 
 # ╔═╡ 1b412983-074d-4b93-9444-88b92a2dd070
 md"""
-👉 Change your quantity (Q): $(@bind q_impact Slider(1:180, default=115, show_value=true))🍰
+👉 Change your quantity (Q): $(@bind q_impact Slider(1:180, default=149, show_value=true))🍰
 
 """
 
+# ╔═╡ bf273b5e-a43b-45bf-82b5-e1083d8543d0
+
+
+# ╔═╡ b2041327-35e5-45fa-8eb8-88138bee3333
+
+
+# ╔═╡ 8b87a382-68ee-490f-af7e-23e5f1ee96ad
+md"
+> Now the idea is simple: If we can improve by making more cake, then this is not optimal. Conversely, a situation in which additional cake is not increasing the expected profit is a situation where we cannot get better anymore.
+"
+
 # ╔═╡ bf2e12f5-09fe-44a1-aaaf-a11611666b1c
+
+
+# ╔═╡ 2517b816-c9eb-4625-a091-2c86af00cbcf
 
 
 # ╔═╡ 4c283bff-24ec-419a-b6f8-c81c2803e167
@@ -132,37 +173,60 @@ md"""# We Reach Optimality if 1 More Unit Has No Benefit
 
 
 - Adding another unit is beneficial as long as -- SL × Cₒ + (1 -- SL) × Cᵤ > 0
-- Assuming Cₒ + Cᵤ > 0, this is equivalent to SL < CF
+- This is equivalent to SL < CF
+- Note that increasing the quantity also increases SL
 
+!!! tip "➡ We should increase as long as SL < CF and reach the optimum when SL = CF."
 
 
 
 
 """
 
-# ╔═╡ ad76e90c-2964-4d46-98ee-d0a5200dd490
+# ╔═╡ 0680ab63-fa27-4842-94ce-f59978bbbf07
+
+
+# ╔═╡ e86cd5cc-43d7-462c-a773-76e42698eaf3
+
+
+# ╔═╡ 30e91ba3-8176-4672-b172-432bb306f90b
+md"
+> What if SL = CF is not possible because it requires a fraction of a unit (e.g. 115.2 cakes)? To answer this, we distinguish 
+> - Continuous demand distributions (e.g., Normal distribution or Uniform distribution)
+> - Discrete demand distribution (e.g., Three-point distribution with a worst/most-likely/best case or Poisson distribution) 
+"
+
+# ╔═╡ 3a60265a-9b6f-4ca5-b323-bab021e8a486
+
+
+# ╔═╡ 0e34fb8c-8626-4cfe-9193-67b3509d777a
+
+
+# ╔═╡ f1b55f68-be80-4cd4-a3b8-7f959515ff3c
+
+md"""## Continuous Demand Distributions
+
+- We calculate the quantity for which SL = CF. This gives a possibly impractical optimum, which might require us to produces fractions of units
+- If we cannot serve fractions, we might now wonder whether to round up or down or what else to do
+- Note that the optimum will be either of the neighbouring integers[^1]
+  - Thus, we should check the expected profit for both neighbouring integers
+  - This, however, is not very practical
+  - Instead rounding to the next integer or simply rounding up for pragmatic reasons is recommended[^2]
+"""
+
+# ╔═╡ c062439a-ff15-4ca3-8485-532535a58fd9
 md"""
-
-
-Next, we distinguish 
-- Continuous distributions (e.g., Normal distribution or Uniform distribution)
-- Discrete distribution (e.g., Three-point distribution with a worst/most-likely/best case or Poisson distribution) and 
-
-
-
-
+[^1]: This is because the expected profit function is concave in Q.
+[^2]: If you're unhappy with me not giving a clear recommendation, please note that it should not matter -- if you're life depends on rounding up or down in this situation, then you might be doing something wrong. After all, the assumption of normally distributed demand is already a simplifying assumption (What does it actually mean that Pr[demand ≤ 115.2] = 80%?).
 """
 
-# ╔═╡ 49be1a24-02e4-4244-a61e-78113a2b655f
+# ╔═╡ 74853363-7bcf-4068-9517-30fa9bda2680
 
 
 # ╔═╡ c7937922-ea60-41b7-8e26-0bdc0b910ad5
 
 
-# ╔═╡ 5c20ba81-7d54-4f2b-9cfd-7d6c815e693f
-
-
-# ╔═╡ 365c61d5-9d5d-4c69-a79b-02d3abff9af8
+# ╔═╡ 4a99a184-303c-453e-9bc9-08788db3d305
 
 
 # ╔═╡ ebe661ef-8a2a-4380-a085-ed91c52eb97f
@@ -174,8 +238,9 @@ Next, we distinguish
 # ╔═╡ 5f3d33b5-c600-452e-a1b6-ffe3953e33e5
 md"""# Appendix
 
-> **License** 
-> - The mini case Patisserie Cheers (Parts 1-4) and the Newsvendor game as well as the game result survey are subject to [MIT license](https://www.newsvendor.games/license/).
+## License
+
+The mini case Patisserie Cheers (Parts 1-4) and the Newsvendor game as well as the game result survey are subject to [MIT license](https://www.newsvendor.games/license/).
 
 """
 
@@ -201,12 +266,6 @@ Decision biases
 Calibrate your utility function to maximize expected utility 
 - Kreps, David, Microeconomics for Managers, 2019, [Appendix 4](https://gsb-sites.stanford.edu/micro4managers/wp-content/uploads/sites/33/2021/08/appendix_4-expected_utility_as_a_normative_decision_aide.pdf)
 """
-
-# ╔═╡ 435db58d-1ee9-45d2-89e0-5b7c3d75e9ac
-
-
-# ╔═╡ 9a2f3b3d-5932-49f9-a775-004b79da899f
-
 
 # ╔═╡ 82968dd3-b9a4-42c6-bea1-c31285c39f64
 md"## ⚙ Setup Appearance"
@@ -237,6 +296,10 @@ md"# Source Code
 else
 	md""
 end
+
+# ╔═╡ e8c59955-95fa-4c44-9822-e29c246a6d87
+InlineFootnotesStyleSuperscript()
+
 
 # ╔═╡ 9955422e-769d-442a-b7d7-edea3156e8f1
 if show_ui
@@ -335,7 +398,7 @@ begin
 end
 
 # ╔═╡ f4036bac-aae8-49bd-905b-548610e4ae75
-hint(md""" **SL will be different**, e.g., if we decide about going 149🍰 ➡ 150🍰, then the 150th cake will be left over with probability 95%, and sold with a chance of  5%. (This suggests that adding the 150th cakes is not profitable; instead, we should consider reducting the quantity below 149).
+hint(md""" **SL will be different**, e.g., if we decide about going 149🍰 ➡ 150🍰, then the 150th cake will be left over with probability 95%, and sold with a chance of  5%. (This suggests that adding the 150th cakes is not profitable; instead, we should think about reducing the quantity).
 	
 	""", """What changes if we ask this question for different stock quantities?""")
 
@@ -467,6 +530,27 @@ begin
 	md""
 end
 
+# ╔═╡ 16d642ff-6397-413c-852d-9b7a041dc000
+let
+	q0 = -.3 * 10 + (1 - .3) *32  |> my_round
+	q1 = -.8 * 10 + (1 - .8) *32  |> my_round
+	q2 = -1 * 10 + (1 - 1) *32  |> my_round
+
+md"""### Remark: Why does it not work the other way around?
+i.e., starting with 2 cakes, calculating the incremental profit and go down as long as it's negative? Let's evaluate the expression for our example. With the above example, it seems we should go down to 0 cakes. The devil is in the detail: – SL × Cₒ + (1 – SL) × Cᵤ evaluates the expected profit of another unit; not of a unit less. The reason is that the definition of SL is about the probability of covering all demand: 
+
+SL(Q) = Pr(Demand ≤ Q)
+
+With an additional unit, i.e., Q + 1 units, we have a chance of SL(Q) to have this extra unit left over, paying Cₒ; and chance of 1 – SL(Q), paying Cᵤ. 
+
+In a parallel universe, in which they define SL(Q) = Pr(Demand < Q) with a strict inequality, this would be different. But we follow the convention of SL(Q) = Pr(Demand ≤ Q).
+ 
+
+
+
+"""
+end
+
 # ╔═╡ b2c19571-95b1-4b7f-9ec1-ed83ba7b8aef
 begin # Default parameters
 	μ = 90	 
@@ -564,7 +648,7 @@ md"""
 
 
 
-➡ Additional cake will be left over (if we do NOT run out of stock) *or* sells (if we run out of stock); this gives the following calculation:
+➡ Additional cake will be leftover (if we do NOT run out of stock) *or* sells (if we run out of stock); this gives the following calculation:
 
 | What could happen                   | Probability           | Implication        | Expected Impact of 1 More 🍰        |
 |----------------------------|-----------------------|--------------------|----------------------|
@@ -585,7 +669,7 @@ let
 	SL_impact_percent = round(100*SL_impact, sigdigits=2) 
 	
 	md"""
-	# More General: Should We Add More 🍰?
+	# More General: Should We Make More 🍰?
 	
 	
 	If we originally planned to make **Q** 🍰, and now consider to go up to **Q+1** 🍰, we get the following calculation:
@@ -593,8 +677,8 @@ let
 	
 	| What could happen                   | Probability           | Implication        | Expected Impact of 1 More 🍰     |
 	|---------------------|-----------------------------|--------------------|---------------------------------------|
-	| Q+1th 🍰 is left over          | SL at Q        | -Cₒ |  SL × (-Cₒ)       |
-	| Q+1th 🍰 is sold | 100% - SL at  Q |  Cᵤ | (1 - SL) × Cᵤ |
+	| Additional 🍰 is left over          | SL at Q        | -Cₒ |  SL × (-Cₒ)       |
+	| Additional 🍰 is sold | 1 -- SL at  Q |  Cᵤ | (1 - SL) × Cᵤ |
 	| | | |----------------------------------------------------------|
 	|                     |                      |                |             Total:      - SL × Cₒ + (1 - SL) × Cᵤ |
 	
@@ -610,17 +694,13 @@ let
 end
 
 # ╔═╡ 1265fc5c-6891-4172-9a38-62c7a56b1371
-hint(md""" Adding a tiny unit to 115🍰 still promises more profit, but when going 116🍰 ➡ 117🍰, we would expect to loose money. Thus, 115 or 116 is optimal (theoretically, it's $(my_round( (NewsvendorModel.q_opt(NewsvendorModel.solve(nvm, rounded=false))), sigdigits=4)))
+hint(md""" Adding a tiny unit to 115🍰 still promises more profit, but when going 116🍰 ➡ 117🍰, we would expect to loose money. Thus, 115 or 116 is optimal (computationally, it's $(my_round( (NewsvendorModel.q_opt(NewsvendorModel.solve(nvm, rounded=false))), sigdigits=4)), though it makes little sense to serve 0.2 cakes).
 	""", """When should we no more increase the number of cakes?""")
 
-# ╔═╡ f1b55f68-be80-4cd4-a3b8-7f959515ff3c
+# ╔═╡ 118785f7-9e39-4a93-a984-a5892774a580
 
-md"""## Continuous Demand Distributions
-
-**We increase until SL = CF; this gives the optimum**, which typically involves fractions of units
-(then check the nearest integers, or simply round, or round up for a pragmatic result)
-
-Consider the [Scenario II of *Cheers!*](https://qz.com/951055/a-new-generation-of-even-faster-fashion-is-leaving-hm-and-zara-in-the-dust), where demand is uniformly distributed between 0 and 60 cakes; selling price is $(cheers_2.price), production cost is $(cheers_2.cost), and the salvage value is again $(cheers_2.salvage). This gives Cu = $(underage_cost(cheers_2)), Co = $(overage_cost(cheers_2)), hence CF = $(critical_fractile(cheers_2) |> my_round).
+md"""### Example: Consider the [Scenario II of *Cheers!*](https://github.com/frankhuettner/newsvendor/blob/main/scenarios/cheers_2_story.md#patisserie-cheers--part-ii), 
+Demand is uniformly distributed between 0 and 60 cakes; selling price is $(cheers_2.price), production cost is $(cheers_2.cost), and the salvage value is again $(cheers_2.salvage), implying Cu = $(underage_cost(cheers_2)), Co = $(overage_cost(cheers_2)), hence CF = $(critical_fractile(cheers_2) |> my_round)
 """
 
 # ╔═╡ 23caa103-6585-495c-b60a-ead90b280d4d
@@ -632,8 +712,8 @@ TwoColumnWideRight(let
 md"""
 
 
-- SL(Q*) = $(cf) is true for Q* = $(q), because the fraction of the demand to the left of $(q) is $(q)/60 = 0.273 
-- We cannot make 16.4 cakes; rounding gives 16, but 17 is close
+- SL( Q* ) = $(cf) is true for Q* = $(q), because the fraction of the demand to the left of $(q) is $(q)/60 = 0.273 
+- We cannot make 16.4 cakes; rounding gives 16, though 17 also seems plausible
 
 """
 end
@@ -646,13 +726,13 @@ $(Resource("https://raw.githubusercontent.com/frankhuettner/newsvendor/main/prep
 
 # ╔═╡ 05272770-2e4c-48cd-abb4-f5ba1ca327f5
 md"""
-If we evaluate the expected profit at q, we get 
+If we evaluate the expected profit around Q*, we get 
 
-- q = 16 gives the expected profit = $(profit(cheers_2, 16))
-- q = 17 gives the expected profit = $(profit(cheers_2, 17))
-- q = 16.4 gives the  expected profit = $(profit(cheers_2, 16.4))
+- Q = 16 gives the expected profit = $(my_round(profit(cheers_2, 16), sigdigits=5))
+- Q = Q* gives the  expected profit = $(my_round(profit(cheers_2, q_opt(cheers_2, rounded=false)), sigdigits=5))
+- Q = 17 gives the expected profit = $(my_round(profit(cheers_2, 17), sigdigits=5))
 
-Indeed, 16 seems better than 17, but it's very close and the difference should not matter for practical reasons.
+Indeed, 16 seems better than 17, but it's very close and the difference should not matter for practical reasons. [Other factors might be more important.](#b3463fdc-c62d-495d-8e45-75fbc277cbf0)
 """
 
 # ╔═╡ b1aef98c-7c87-4192-9de9-7b4fdd4d9cae
@@ -663,24 +743,22 @@ let
 
 md"""## Discrete Demand Distributions
 
-**We increase as long as SL < CF, and stop if SL ≥ CF**
+!!! tip "We increase as long as SL < CF, and stop where we are once we reach SL ≥ CF"
 
-Example *Cheers!* IV
+
+
+Example [Scenario IV of *Cheers!*](https://github.com/frankhuettner/newsvendor/blob/main/scenarios/cheers_4_story.md#patisserie-cheers--part-iv),
+- Price = 42, Cost = 10, Salvage value = 0
+- Cₒ = 10, Cᵤ = 32
 - CF = 0.76
-- Demand outcome and probabilities $(cheers_4.demand |> params)
-- This gives SL(0) = 0.3; SL(1) = 0.8; SL(0) = 1
+- Demand outcome and respective probabilities $(cheers_4.demand |> params)
+- This gives SL(0) = 0.3; SL(1) = 0.8; SL(2) = 1
 - Hence, we should increase from 0 to 1 cake (because 0.3 < 0.76); but not from 1 cake to 2 cakes  (because 0.8 is not smaller than 0.76)
+- Indeed, we can calculate the incremental profit of adding another cake if we already made Q cakes, – SL(Q) × Cₒ + (1 – SL(Q)) × Cᵤ
+  - For Q = 0, we get $(q0)   ➡  adding the 1st cake increases expected profit by $(q0)
+  - For Q = 0, we get $(q1)  ➡  adding the 2nd cake decreases expected profit 
+  - For Q = 0, we get $(q2)  ➡  no need to calculate but adding a 3rd cake makes no sense 
 
-Remark: Does it work the other way around, i.e., starting with 2 cakes, calculating the incremental profit – SL × Cₒ + (1 – SL) × Cᵤ and go down as long as it's negative? Let's evaluate the expression for our example (Cₒ = 10, Cᵤ = 32) 
-- q = 0: $(q0)
-- q = 1: $(q1)
-- q = 2: $(q2)
-
-It seems we should go down to 0 cakes. The devil is in the detail: – SL × Cₒ + (1 – SL) × Cᵤ evaluates the expected profit of another unit; not of a unit less. The reason is that the definition of SL is about the probability of covering all demand: 
-
-SL(q) = Pr(Demand ≤ q)
-
-With an additional unit, i.e., q + 1 units, we have a chance of SL(q) to have this extra unit left over, paying Cₒ; and chance of 1 – SL(q), paying Cᵤ.
 
 
 
@@ -712,7 +790,7 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.8.2"
 manifest_format = "2.0"
-project_hash = "4043c2db87a7197ee5149b517575a76d31395c7f"
+project_hash = "102edab743acb5113d573976ee5fdc0360e70a44"
 
 [[deps.AbstractFFTs]]
 deps = ["ChainRulesCore", "LinearAlgebra"]
@@ -853,9 +931,9 @@ uuid = "dc8bdbbb-1ca9-579f-8c36-e416f6a65cce"
 version = "1.0.2"
 
 [[deps.DataAPI]]
-git-tree-sha1 = "46d2680e618f8abd007bce0c3026cb0c4a8f2032"
+git-tree-sha1 = "e08915633fcb3ea83bf9d6126292e5bc5c739922"
 uuid = "9a962f9c-6df0-11e9-0e5d-c546b8b5ee8a"
-version = "1.12.0"
+version = "1.13.0"
 
 [[deps.DataStructures]]
 deps = ["Compat", "InteractiveUtils", "OrderedCollections"]
@@ -951,6 +1029,12 @@ git-tree-sha1 = "8339d61043228fdd3eb658d86c926cb282ae72a8"
 uuid = "59287772-0a20-5a39-b81b-1366585eb4c0"
 version = "0.4.2"
 
+[[deps.Ghostscript_jll]]
+deps = ["Artifacts", "JLLWrappers", "Libdl", "Pkg"]
+git-tree-sha1 = "78e2c69783c9753a91cdae88a8d432be85a2ab5e"
+uuid = "61579ee1-b43e-5ca0-a5da-69d92c66a64b"
+version = "9.55.0+0"
+
 [[deps.Graphics]]
 deps = ["Colors", "LinearAlgebra", "NaNMath"]
 git-tree-sha1 = "d61890399bc535850c4bf08e4e0d3a7ad0f21cbd"
@@ -1036,16 +1120,16 @@ uuid = "82e4d734-157c-48bb-816b-45c225c6df19"
 version = "0.6.6"
 
 [[deps.ImageMagick]]
-deps = ["FileIO", "ImageCore", "ImageMagick_jll", "InteractiveUtils"]
-git-tree-sha1 = "ca8d917903e7a1126b6583a097c5cb7a0bedeac1"
+deps = ["FileIO", "ImageCore", "ImageMagick_jll", "InteractiveUtils", "Libdl", "Pkg", "Random"]
+git-tree-sha1 = "5bc1cb62e0c5f1005868358db0692c994c3a13c6"
 uuid = "6218d12a-5da1-5696-b52f-db25d2ecc6d1"
-version = "1.2.2"
+version = "1.2.1"
 
 [[deps.ImageMagick_jll]]
-deps = ["JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pkg", "Zlib_jll", "libpng_jll"]
-git-tree-sha1 = "1c0a2295cca535fabaf2029062912591e9b61987"
+deps = ["Artifacts", "Ghostscript_jll", "JLLWrappers", "JpegTurbo_jll", "Libdl", "Libtiff_jll", "Pkg", "Zlib_jll", "libpng_jll"]
+git-tree-sha1 = "124626988534986113cfd876e3093e4a03890f58"
 uuid = "c73af94c-d91f-53ed-93a7-00f77d67a9d7"
-version = "6.9.10-12+3"
+version = "6.9.12+3"
 
 [[deps.ImageMetadata]]
 deps = ["AxisArrays", "ImageAxes", "ImageBase", "ImageCore"]
@@ -1156,9 +1240,9 @@ version = "1.4.0"
 
 [[deps.JLD2]]
 deps = ["FileIO", "MacroTools", "Mmap", "OrderedCollections", "Pkg", "Printf", "Reexport", "TranscodingStreams", "UUIDs"]
-git-tree-sha1 = "1c3ff7416cb727ebf4bab0491a56a296d7b8cf1d"
+git-tree-sha1 = "18dd357553912b6adc23b5f721e4be19930140c6"
 uuid = "033835bb-8acc-5ee8-8aae-3f567f8a3819"
-version = "0.4.25"
+version = "0.4.28"
 
 [[deps.JLLWrappers]]
 deps = ["Preferences"]
@@ -1173,10 +1257,10 @@ uuid = "682c06a0-de6a-54ab-a142-c8b1cf79cde6"
 version = "0.21.3"
 
 [[deps.JSON3]]
-deps = ["Dates", "Mmap", "Parsers", "StructTypes", "UUIDs"]
-git-tree-sha1 = "fd6f0cae36f42525567108a42c1c674af2ac620d"
+deps = ["Dates", "Mmap", "Parsers", "SnoopPrecompile", "StructTypes", "UUIDs"]
+git-tree-sha1 = "84b10656a41ef564c39d2d477d7236966d2b5683"
 uuid = "0f8b85d8-7281-11e9-16c2-39a750bddbf1"
-version = "1.9.5"
+version = "1.12.0"
 
 [[deps.JpegTurbo]]
 deps = ["CEnum", "FileIO", "ImageCore", "JpegTurbo_jll", "TOML"]
@@ -1429,10 +1513,10 @@ uuid = "d96e819e-fc66-5662-9728-84c9c7592b0a"
 version = "0.12.3"
 
 [[deps.Parsers]]
-deps = ["Dates"]
-git-tree-sha1 = "6c01a9b494f6d2a9fc180a08b182fcb06f0958a0"
+deps = ["Dates", "SnoopPrecompile"]
+git-tree-sha1 = "b64719e8b4504983c7fca6cc9db3ebc8acc2a4d6"
 uuid = "69de0a69-1ddd-5017-9359-2bf0b02dc9f0"
-version = "2.4.2"
+version = "2.5.1"
 
 [[deps.Pkg]]
 deps = ["Artifacts", "Dates", "Downloads", "LibGit2", "Libdl", "Logging", "Markdown", "Printf", "REPL", "Random", "SHA", "Serialization", "TOML", "Tar", "UUIDs", "p7zip_jll"]
@@ -1453,15 +1537,15 @@ version = "0.0.5"
 
 [[deps.PlutoLinks]]
 deps = ["FileWatching", "InteractiveUtils", "Markdown", "PlutoHooks", "Revise", "UUIDs"]
-git-tree-sha1 = "0e8bcc235ec8367a8e9648d48325ff00e4b0a545"
+git-tree-sha1 = "8f5fa7056e6dcfb23ac5211de38e6c03f6367794"
 uuid = "0ff47ea0-7a50-410d-8455-4348d5de0420"
-version = "0.1.5"
+version = "0.1.6"
 
 [[deps.PlutoTeachingTools]]
 deps = ["Downloads", "HypertextLiteral", "LaTeXStrings", "Latexify", "Markdown", "PlutoLinks", "PlutoUI", "Random"]
-git-tree-sha1 = "d8be3432505c2febcea02f44e5f4396fae017503"
+git-tree-sha1 = "ea3e4ac2e49e3438815f8946fa7673b658e35bdb"
 uuid = "661c6b06-c737-4d37-b85c-46df65de6f69"
-version = "0.2.3"
+version = "0.2.5"
 
 [[deps.PlutoUI]]
 deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
@@ -1499,9 +1583,9 @@ version = "2.6.0"
 
 [[deps.Quaternions]]
 deps = ["LinearAlgebra", "Random"]
-git-tree-sha1 = "fd78cbfa5f5be5f81a482908f8ccfad611dca9a9"
+git-tree-sha1 = "fcebf40de9a04c58da5073ec09c1c1e95944c79b"
 uuid = "94ee1d12-ae83-5a48-8b1c-48b8ff168ae0"
-version = "0.6.0"
+version = "0.6.1"
 
 [[deps.REPL]]
 deps = ["InteractiveUtils", "Markdown", "Sockets", "Unicode"]
@@ -1598,14 +1682,19 @@ git-tree-sha1 = "8fb59825be681d451c246a795117f317ecbcaa28"
 uuid = "45858cf5-a6b0-47a3-bbea-62219f50df47"
 version = "0.1.2"
 
+[[deps.SnoopPrecompile]]
+git-tree-sha1 = "f604441450a3c0569830946e5b33b78c928e1a85"
+uuid = "66db9d55-30c0-4569-8b51-7e840670fc0c"
+version = "1.0.1"
+
 [[deps.Sockets]]
 uuid = "6462fe0b-24de-5631-8697-dd941f90decc"
 
 [[deps.SortingAlgorithms]]
 deps = ["DataStructures"]
-git-tree-sha1 = "b3363d7460f7d098ca0912c69b082f75625d7508"
+git-tree-sha1 = "a4ada03f999bd01b3a25dcaa30b2d929fe537e00"
 uuid = "a2af1166-a08f-5f64-846c-94a0d3cef48c"
-version = "1.0.1"
+version = "1.1.0"
 
 [[deps.SparseArrays]]
 deps = ["LinearAlgebra", "Random"]
@@ -1625,9 +1714,9 @@ version = "0.1.1"
 
 [[deps.StaticArrays]]
 deps = ["LinearAlgebra", "Random", "StaticArraysCore", "Statistics"]
-git-tree-sha1 = "f86b3a049e5d05227b10e15dbb315c5b90f14988"
+git-tree-sha1 = "4e051b85454b4e4f66e6a6b7bdc452ad9da3dcf6"
 uuid = "90137ffa-7385-5640-81b9-e52037218182"
-version = "1.5.9"
+version = "1.5.10"
 
 [[deps.StaticArraysCore]]
 git-tree-sha1 = "6b7ba252635a5eff6a0b0664a41ee140a1c9e72a"
@@ -1688,9 +1777,9 @@ uuid = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [[deps.TiffImages]]
 deps = ["ColorTypes", "DataStructures", "DocStringExtensions", "FileIO", "FixedPointNumbers", "IndirectArrays", "Inflate", "Mmap", "OffsetArrays", "PkgVersion", "ProgressMeter", "UUIDs"]
-git-tree-sha1 = "70e6d2da9210371c927176cb7a56d41ef1260db7"
+git-tree-sha1 = "f8cd5b95aae14d3d88da725414bdde342457366f"
 uuid = "731e570b-9d59-4bfa-96dc-6df516fadf69"
-version = "0.6.1"
+version = "0.6.2"
 
 [[deps.TiledIteration]]
 deps = ["OffsetArrays"]
@@ -1779,37 +1868,50 @@ version = "17.4.0+0"
 # ╟─fd5ac52c-e5e8-4603-a835-6abd8e4331a1
 # ╟─33f4e807-5329-4edc-8b5e-a1cd46c60594
 # ╟─ac888d85-cb85-44da-94b3-bf7095d1714b
-# ╟─49dbe76a-af43-4026-82ef-cf934954efe9
+# ╟─ccf882c4-bb2f-4c05-b1c3-8e870e0f9ece
 # ╟─cfd852f3-1e53-476f-b646-743dde2c6481
-# ╟─59a24e9b-24f6-4b5b-b41d-88da790b1b02
+# ╟─cb1ac8fb-69f1-4a6f-b799-4a78b38dc7b9
+# ╟─b3463fdc-c62d-495d-8e45-75fbc277cbf0
 # ╟─94f0412b-6c34-4b64-8365-9d11dfebd055
 # ╟─d7768d12-a3ad-48d7-acb9-2bdd46cc8586
+# ╟─623ca4f6-ce93-4a81-a0ea-9dd3e6327b5c
 # ╟─85b982ae-6cc2-4b9f-bc38-28c1d91f0c8a
-# ╟─f7433a6b-35bc-4d2a-ae3e-a109fcef8960
 # ╟─d1e0bb3d-e84c-41fb-89f7-5af19de47fca
 # ╟─f4036bac-aae8-49bd-905b-548610e4ae75
+# ╟─0d3a316c-5b83-45e2-bae2-9b9e128cb527
+# ╟─93a0fa2d-63de-4e47-a233-0011410b47a3
+# ╟─ffc81ab2-f7e5-4a3f-9646-16e107036849
+# ╟─df43f01f-2906-4f5a-b9ec-10025ce605dc
 # ╟─0de1569c-dae5-4a49-b37d-6acaf89c268f
 # ╟─af2769e2-7c52-4a0e-a38e-220f0dee25ab
 # ╟─1b412983-074d-4b93-9444-88b92a2dd070
 # ╟─1265fc5c-6891-4172-9a38-62c7a56b1371
+# ╟─bf273b5e-a43b-45bf-82b5-e1083d8543d0
+# ╟─b2041327-35e5-45fa-8eb8-88138bee3333
+# ╟─8b87a382-68ee-490f-af7e-23e5f1ee96ad
 # ╟─bf2e12f5-09fe-44a1-aaaf-a11611666b1c
+# ╟─2517b816-c9eb-4625-a091-2c86af00cbcf
 # ╟─4c283bff-24ec-419a-b6f8-c81c2803e167
 # ╟─2cd86a70-ec86-48e4-8ca3-7f5593380fc1
-# ╟─ad76e90c-2964-4d46-98ee-d0a5200dd490
-# ╟─49be1a24-02e4-4244-a61e-78113a2b655f
+# ╟─0680ab63-fa27-4842-94ce-f59978bbbf07
+# ╟─e86cd5cc-43d7-462c-a773-76e42698eaf3
+# ╟─30e91ba3-8176-4672-b172-432bb306f90b
+# ╟─3a60265a-9b6f-4ca5-b323-bab021e8a486
+# ╟─0e34fb8c-8626-4cfe-9193-67b3509d777a
 # ╟─f1b55f68-be80-4cd4-a3b8-7f959515ff3c
+# ╟─c062439a-ff15-4ca3-8485-532535a58fd9
+# ╟─74853363-7bcf-4068-9517-30fa9bda2680
+# ╟─118785f7-9e39-4a93-a984-a5892774a580
 # ╟─23caa103-6585-495c-b60a-ead90b280d4d
 # ╟─05272770-2e4c-48cd-abb4-f5ba1ca327f5
 # ╟─c7937922-ea60-41b7-8e26-0bdc0b910ad5
 # ╟─b1aef98c-7c87-4192-9de9-7b4fdd4d9cae
-# ╟─5c20ba81-7d54-4f2b-9cfd-7d6c815e693f
-# ╟─365c61d5-9d5d-4c69-a79b-02d3abff9af8
+# ╟─4a99a184-303c-453e-9bc9-08788db3d305
+# ╟─16d642ff-6397-413c-852d-9b7a041dc000
 # ╟─ebe661ef-8a2a-4380-a085-ed91c52eb97f
 # ╟─db80883f-d378-4ec1-a9c2-8e3666176941
 # ╟─5f3d33b5-c600-452e-a1b6-ffe3953e33e5
 # ╟─19975a48-0f5f-4f8b-903c-3d93181d81a1
-# ╟─435db58d-1ee9-45d2-89e0-5b7c3d75e9ac
-# ╟─9a2f3b3d-5932-49f9-a775-004b79da899f
 # ╟─82968dd3-b9a4-42c6-bea1-c31285c39f64
 # ╟─c6d7574b-18b2-49f6-aa22-59b7b7e47247
 # ╟─41ac0852-3555-48b9-a369-3b617adba62b
@@ -1817,6 +1919,7 @@ version = "17.4.0+0"
 # ╟─47bad2aa-051e-4ef0-97b6-2d94641b1a5d
 # ╟─e0d09197-fc18-46e9-b0f9-b513ea32596a
 # ╟─e44321cc-abd9-45ad-b106-e141a7fa086e
+# ╟─e8c59955-95fa-4c44-9822-e29c246a6d87
 # ╟─9955422e-769d-442a-b7d7-edea3156e8f1
 # ╟─b2c19571-95b1-4b7f-9ec1-ed83ba7b8aef
 # ╟─ecc6cd29-8cbb-4b61-87c1-a7d825f46943
