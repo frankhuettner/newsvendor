@@ -756,8 +756,8 @@ Example [Scenario IV of *Cheers!*](https://github.com/frankhuettner/newsvendor/b
 - Hence, we should increase from 0 to 1 cake (because 0.3 < 0.76); but not from 1 cake to 2 cakes  (because 0.8 is not smaller than 0.76)
 - Indeed, we can calculate the incremental profit of adding another cake if we already made Q cakes, – SL(Q) × Cₒ + (1 – SL(Q)) × Cᵤ
   - For Q = 0, we get $(q0)   ➡  adding the 1st cake increases expected profit by $(q0)
-  - For Q = 0, we get $(q1)  ➡  adding the 2nd cake decreases expected profit 
-  - For Q = 0, we get $(q2)  ➡  no need to calculate but adding a 3rd cake makes no sense 
+  - For Q = 1, we get $(q1)  ➡  adding the 2nd cake decreases expected profit 
+  - For Q = 2, we get $(q2)  ➡  no need to calculate but adding a 3rd cake makes no sense 
 
 
 
